@@ -33,6 +33,13 @@ from functools import wraps
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-key")
 
+# Tampilkan error detail untuk debugging (matikan di production nanti)
+if os.getenv("VERCEL"):
+    @app.errorhandler(500)
+    def handle_500(e):
+        import traceback
+        return f"<pre>500 Error:\n{traceback.format_exc()}</pre>", 500
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Di Vercel serverless, filesystem read-only kecuali /tmp
@@ -212,7 +219,10 @@ def admin_required(view):
 # -------------------------------------------------
 @app.route("/")
 def index():
-    conn = get_db_conn()
+    try:
+        conn = get_db_conn()
+    except Exception as e:
+        return f"<pre>Database Connection Error:\n{e}\n\nDATABASE_URL set: {bool(DATABASE_URL)}\nDATABASE_URL prefix: {DATABASE_URL[:30] + '...' if DATABASE_URL else 'NONE'}</pre>", 500
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     # Layer peta (Parameter)
