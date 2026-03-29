@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel - Geo AI WebGIS Barru</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
+
+    body {
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .page {
+      max-width: 1400px;
+      margin: 40px auto;
+      padding: 0 16px 24px 16px;
+    }
+
+    header {
+      background: #14532d;
+      color: #fff;
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    header h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    header span {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+    }
+
+    .btn-small {
+      border-radius: 999px;
+      padding: 6px 12px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-ghost {
+      background: #ffffff22;
+      color: #fff;
+    }
+
+    .btn-ghost:hover {
+      background: #ffffff33;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: #fff;
+      border: 1px solid #bbf7d0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 960px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 14px 16px;
+      box-shadow: 0 3px 12px rgba(15, 23, 42, 0.12);
+    }
+
+    .card h2 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+      color: #14532d;
+    }
+
+    .card h3 {
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      margin-top: 12px;
+    }
+
+    label {
+      font-size: 0.8rem;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    input[type="text"],
+    textarea,
+    input[type="file"],
+    input[type="password"],
+    input[type="number"],
+    select {
+      width: 100%;
+      font-size: 0.85rem;
+      padding: 7px 8px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      margin-bottom: 8px;
+    }
+
+    textarea {
+      min-height: 70px;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: #22c55e;
+      box-shadow: 0 0 0 1px #bbf7d0;
+    }
+
+    .btn-primary {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 14px;
+      background: #14532d;
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary:hover {
+      background: #166534;
+    }
+
+    .flash-messages {
+      margin: 10px 0;
+    }
+
+    .flash {
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      padding: 6px 8px;
+      font-size: 0.8rem;
+      border-radius: 4px;
+      margin-bottom: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    th,
+    td {
+      padding: 6px 8px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f9fafb;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    tr:nth-child(even) td {
+      background: #f9fafb;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+    }
+
+    .badge-admin {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .badge-user {
+      background: #e5e7eb;
+      color: #4b5563;
+    }
+
+    .btn-delete {
+      border: none;
+      background: #fee2e2;
+      color: #b91c1c;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+
+    .btn-delete:hover {
+      background: #fecaca;
+    }
+
+    .btn-reset {
+      border: none;
+      background: #dbeafe;
+      color: #1d4ed8;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+
+    .btn-reset:hover {
+      background: #bfdbfe;
+    }
+
+    /* Section untuk kategori baru */
+    .full-width-section {
+      margin-top: 24px;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 960px) {
+      .category-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <h1>Admin Panel • Geo AI WebGIS Barru</h1>
+        <span>Kelola layer peta & akun admin</span>
+      </div>
+      <div class="header-right">
+        <span>
+          <i class="fas fa-user-shield"></i>
+          {{ current_user }}
+        </span>
+        <a href="{{ url_for('index') }}">
+          <button class="btn-small btn-ghost">
+            <i class="fas fa-arrow-left"></i> Beranda
+          </button>
+        </a>
+        <a href="{{ url_for('logout') }}">
+          <button class="btn-small btn-outline">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </a>
+      </div>
+    </header>
+
+    <div class="flash-messages">
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      {% for msg in messages %}
+      <div class="flash">{{ msg }}</div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+    </div>
+
+    <div class="grid">
+      <!-- KIRI: LAYER PARAMETER -->
+      <section class="card">
+        <h2><i class="fas fa-layer-group"></i> Kelola Layer Parameter</h2>
+        <p style="font-size:0.8rem; opacity:0.8; margin-bottom:8px;">
+          Upload shapefile (.zip) atau GeoJSON untuk menambah layer parameter baru.
+        </p>
+
+        <form action="{{ url_for('upload_layer') }}" method="post" enctype="multipart/form-data"
+          style="margin-bottom:10px;">
+          <label for="layer_name">Nama Layer</label>
+          <input type="text" id="layer_name" name="layer_name" placeholder="Contoh: Drainase, Tekstur, pH Tanah"
+            required />
+
+          <label for="description">Deskripsi (opsional)</label>
+          <textarea id="description" name="description"
+            placeholder="Keterangan singkat layer, sumber data, tahun, dsb."></textarea>
+
+          <label for="layer_file">File Layer</label>
+          <input type="file" id="layer_file" name="layer_file" required />
+
+          <button type="submit" class="btn-primary" style="margin-top:6px;">
+            <i class="fas fa-cloud-arrow-up"></i> Upload & Simpan
+          </button>
+        </form>
+
+        <hr style="margin:10px 0;" />
+
+        <h3>Daftar Layer Parameter</h3>
+
+        {% if layers %}
+        <div style="max-height:260px; overflow:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Nama Layer</th>
+                <th>File</th>
+                <th>Dibuat</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for lyr in layers %}
+              <tr>
+                <td>{{ lyr.layer_name }}</td>
+                <td>{{ lyr.file_name or '-' }}</td>
+                <td>
+                  {% if lyr.created_at %}
+                  {{ lyr.created_at.strftime('%Y-%m-%d %H:%M') }}
+                  {% else %}
+                  -
+                  {% endif %}
+                </td>
+                <td>
+                  <form action="{{ url_for('delete_layer', layer_id=lyr.id) }}" method="post"
+                    onsubmit="return confirm('Hapus layer ini?');">
+                    <button type="submit" class="btn-delete">
+                      <i class="fas fa-trash"></i> Hapus
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p style="font-size:0.8rem; opacity:0.8;">
+          Belum ada layer parameter di database.
+        </p>
+        {% endif %}
+      </section>
+
+      <!-- KANAN: USER ADMIN + PARAMETER LAHAN -->
+      <section class="card">
+        <h2><i class="fas fa-users-cog"></i> Kelola User Admin</h2>
+        <p style="font-size:0.8rem; opacity:0.8; margin-bottom:8px;">
+          Tambah akun admin baru, reset password, atau hapus akun yang tidak digunakan.
+        </p>
+
+        <form action="{{ url_for('admin_add_user') }}" method="post" style="margin-bottom:10px;">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required />
+
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+
+          <label style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+            <input type="checkbox" name="is_admin" checked />
+            <span style="font-size:0.8rem;">Berikan hak admin penuh</span>
+          </label>
+
+          <button type="submit" class="btn-primary">
+            <i class="fas fa-user-plus"></i> Tambah User
+          </button>
+        </form>
+
+        <hr style="margin:10px 0;" />
+
+        <h3>Daftar User</h3>
+
+        {% if users %}
+        <div style="max-height:220px; overflow:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Peran</th>
+                <th>Dibuat</th>
+                <th>Reset PW</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for u in users %}
+              <tr>
+                <td>{{ u.username }}</td>
+                <td>
+                  {% if u.is_admin %}
+                  <span class="badge badge-admin">
+                    <i class="fas fa-shield-alt"></i> Admin
+                  </span>
+                  {% else %}
+                  <span class="badge badge-user">User</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if u.created_at %}
+                  {{ u.created_at.strftime('%Y-%m-%d %H:%M') }}
+                  {% else %}
+                  -
+                  {% endif %}
+                </td>
+
+                <td>
+                  <form action="{{ url_for('admin_reset_user_password', user_id=u.id) }}" method="post"
+                    style="display:flex;align-items:center;gap:4px;">
+                    <input type="password" name="new_password" placeholder="Password baru" required
+                      style="width:120px;font-size:0.75rem;padding:4px 6px;" />
+                    <button type="submit" class="btn-reset">
+                      <i class="fas fa-key"></i>
+                    </button>
+                  </form>
+                </td>
+
+                <td>
+                  <form action="{{ url_for('admin_delete_user', user_id=u.id) }}" method="post"
+                    onsubmit="return confirm('Hapus user ini?');">
+                    <button type="submit" class="btn-delete">
+                      <i class="fas fa-user-minus"></i> Hapus
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p style="font-size:0.8rem; opacity:0.8;">
+          Belum ada user di sistem.
+        </p>
+        {% endif %}
+
+        <hr style="margin:14px 0;" />
+
+        <h3>Kelola Parameter Lahan</h3>
+        <p style="font-size:0.8rem; opacity:0.8; margin-bottom:8px;">
+          Ubah isi kartu pada menu "Parameter Lahan yang Digunakan" di halaman utama.
+        </p>
+
+        <form action="{{ url_for('admin_add_param') }}" method="post" style="margin-bottom:10px;">
+          <label for="tag_label">Tag (pill hijau)</label>
+          <input type="text" id="tag_label" name="tag_label" placeholder="Contoh: Fisik tanah" required />
+
+          <label for="icon_class">Icon FontAwesome (opsional)</label>
+          <input type="text" id="icon_class" name="icon_class" placeholder="fa-water, fa-mountain, dsb." />
+
+          <label for="param_title">Judul</label>
+          <input type="text" id="param_title" name="title" placeholder="Contoh: Drainase" required />
+
+          <label for="param_desc">Deskripsi</label>
+          <textarea id="param_desc" name="description" required></textarea>
+
+          <label for="order_no">Urutan tampil</label>
+          <input type="number" id="order_no" name="order_no" value="1" />
+
+          <button type="submit" class="btn-primary" style="margin-top:4px;">
+            <i class="fas fa-plus"></i> Tambah Parameter
+          </button>
+        </form>
+
+        {% if params %}
+        <div style="max-height:260px; overflow:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Tag</th>
+                <th>Icon</th>
+                <th>Judul</th>
+                <th>Urut</th>
+                <th>Simpan</th>
+                <th>Hapus</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in params %}
+              <tr>
+                <form action="{{ url_for('admin_update_param', param_id=p.id) }}" method="post">
+                  <td>
+                    <input type="text" name="tag_label" value="{{ p.tag_label }}"
+                      style="width:120px;font-size:0.75rem;">
+                  </td>
+                  <td>
+                    <input type="text" name="icon_class" value="{{ p.icon_class }}"
+                      style="width:110px;font-size:0.75rem;">
+                  </td>
+                  <td>
+                    <input type="text" name="title" value="{{ p.title }}" style="width:150px;font-size:0.75rem;">
+                  </td>
+                  <td>
+                    <input type="number" name="order_no" value="{{ p.order_no }}" style="width:60px;font-size:0.75rem;">
+                  </td>
+                  <td>
+                    <button type="submit" class="btn-reset">
+                      <i class="fas fa-save"></i>
+                    </button>
+                  </td>
+                </form>
+                <td>
+                  <form action="{{ url_for('admin_delete_param', param_id=p.id) }}" method="post"
+                    onsubmit="return confirm('Hapus parameter ini?');">
+                    <button type="submit" class="btn-delete">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p style="font-size:0.8rem; opacity:0.8;">
+          Belum ada parameter lahan di sistem.
+        </p>
+        {% endif %}
+
+        <hr style="margin:14px 0;" />
+        <h4 style="font-size:0.9rem; margin-bottom:6px;">
+          Edit Deskripsi Parameter
+        </h4>
+        <p style="font-size:0.8rem; opacity:0.8; margin-bottom:8px;">
+          Pilih parameter lalu ubah teks deskripsinya.
+        </p>
+
+        <form action="{{ url_for('admin_update_param_description') }}" method="post" style="margin-bottom:10px;">
+          <label for="param_id">Pilih Parameter</label>
+          <select id="param_id" name="param_id" required>
+            {% for p in params %}
+            <option value="{{ p.id }}">{{ p.title }} ({{ p.tag_label }})</option>
+            {% endfor %}
+          </select>
+
+          <label for="param_desc_edit">Deskripsi</label>
+          <textarea id="param_desc_edit" name="description" rows="8" required></textarea>
+
+          <button type="submit" class="btn-primary" style="margin-top:6px;">
+            <i class="fas fa-save"></i> Simpan Deskripsi
+          </button>
+        </form>
+      </section>
+    </div>
+
+    <!-- KATEGORI BARU: KESESUAIAN LAHAN & INFORMASI TAMBAHAN -->
+    <div class="category-grid">
+      <!-- KESESUAIAN LAHAN -->
+      <section class="card">
+        <h2><i class="fas fa-check-circle"></i> Kelola Layer Kesesuaian Lahan</h2>
+        <p style="font-size:0.8rem; opacity:0.8; margin-bottom:8px;">
+          Upload manual layer peta kesesuaian lahan, atau jalankan komputasi otomatis berbasis parameter yang ada.
+        </p>
+
+        <!-- FITUR ANALISIS OTOMATIS -->
+        <div
+          style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px; border-radius: 8px; margin-bottom: 16px;">
+          <h4 style="font-size:0.9rem; color: #166534; margin-bottom:6px;">
+            <i class="fas fa-magic"></i> Analisis Otomatis (WebGIS Geoprocessing)
+          </h4>
+          <p style="font-size:0.8rem; color: #14532d; margin-bottom:10px;">
+            Sistem akan menumpuk (intersect) seluruh layer parameter yang ada di database saat ini untuk menghasilkan
+            Peta Kesesuaian Lahan baru secara otomatis. Proses ini mungkin memakan waktu beberapa detik.
+          </p>
+          <form action="{{ url_for('analisis_otomatis') }}" method="post" onsubmit="
+              const btn = document.getElementById('btn-auto-analysis');
+              const spinner = document.getElementById('spinner-analysis');
+              btn.disabled = true;
+              btn.style.opacity = '0.7';
+              spinner.style.display = 'inline-block';
+              btn.innerHTML = '<i class=\'fas fa-circle-notch fa-spin\'></i> Sedang Memproses Data Spasial...';
+            ">
+            <button id="btn-auto-analysis" type="submit" class="btn-primary" style="background:#059669;">
+              <i class="fas fa-play"></i> Jalankan Analisis Spasial Otomatis
+            </button>
+            <span id="spinner-analysis" style="display:none; font-size:0.85rem; color:#059669; margin-left:10px;">
+              Mohon tunggu...
+            </span>
+          </form>
+        </div>
+
+        <hr style="margin:10px 0; border:0; border-top:1px dashed #d1d5db;" />
+
+        <form action="{{ url_for('upload_kesesuaian') }}" method="post" enctype="multipart/form-data"
+          style="margin-bottom:10px; margin-top:10px;">
+          <label for="kesesuaian_name">Upload Manual Nama Layer</label>
+          <input type="text" id="kesesuaian_name" name="layer_name" placeholder="Contoh: Kesesuaian Akhir Semangka 2024"
+            required />
+
+          <label for="kesesuaian_desc">Deskripsi (opsional)</label>
+          <textarea id="kesesuaian_desc" name="description"
+            placeholder="Keterangan singkat layer kesesuaian"></textarea>
+
+          <label for="kesesuaian_file">File Layer</label>
+          <input type="file" id="kesesuaian_file" name="layer_file" required />
+
+          <button type="submit" class="btn-primary" style="margin-top:6px;">
+            <i class="fas fa-cloud-arrow-up"></i> Upload Kesesuaian
+          </button>
+        </form>
+
+        <hr style="margin:10px 0;" />
+
+        <h3>Daftar Layer Kesesuaian</h3>
+
+        {% if kesesuaian %}
+        <div style="max-height:220px; overflow:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Nama Layer</th>
+                <th>File</th>
+                <th>Dibuat</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for k in kesesuaian %}
+              <tr>
+                <td>{{ k.layer_name }}</td>
+                <td>{{ k.file_name or '-' }}</td>
+                <td>
+                  {% if k.created_at %}
+                  {{ k.created_at.strftime('%Y-%m-%d %H:%M') }}
+                  {% else %}
+                  -
+                  {% endif %}
+                </td>
+                <td>
+                  <form action="{{ url_for('delete_kesesuaian', layer_id=k.id) }}" method="post"
+                    onsubmit="return confirm('Hapus layer ini?');">
+                    <button type="submit" class="btn-delete">
+                      <i class="fas fa-trash"></i> Hapus
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p style="font-size:0.8rem; opacity:0.8;">
+          Belum ada layer kesesuaian di database.
+        </p>
+        {% endif %}
+      </section>
+
+      <!-- INFORMASI TAMBAHAN -->
+      <section class="card">
+        <h2><i class="fas fa-info-circle"></i> Kelola Layer Informasi Tambahan</h2>
+        <p style="font-size:0.8rem; opacity:0.8; margin-bottom:8px;">
+          Upload layer tambahan seperti batas administrasi, jalan, dll.
+        </p>
+
+        <form action="{{ url_for('upload_informasi') }}" method="post" enctype="multipart/form-data"
+          style="margin-bottom:10px;">
+          <label for="informasi_name">Nama Layer</label>
+          <input type="text" id="informasi_name" name="layer_name" placeholder="Contoh: Batas Kecamatan, Jalan Utama"
+            required />
+
+          <label for="informasi_desc">Deskripsi (opsional)</label>
+          <textarea id="informasi_desc" name="description" placeholder="Keterangan singkat layer informasi"></textarea>
+
+          <label for="informasi_file">File Layer</label>
+          <input type="file" id="informasi_file" name="layer_file" required />
+
+          <button type="submit" class="btn-primary" style="margin-top:6px;">
+            <i class="fas fa-cloud-arrow-up"></i> Upload Informasi
+          </button>
+        </form>
+
+        <hr style="margin:10px 0;" />
+
+        <h3>Daftar Layer Informasi</h3>
+
+        {% if informasi %}
+        <div style="max-height:220px; overflow:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Nama Layer</th>
+                <th>File</th>
+                <th>Dibuat</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in informasi %}
+              <tr>
+                <td>{{ i.layer_name }}</td>
+                <td>{{ i.file_name or '-' }}</td>
+                <td>
+                  {% if i.created_at %}
+                  {{ i.created_at.strftime('%Y-%m-%d %H:%M') }}
+                  {% else %}
+                  -
+                  {% endif %}
+                </td>
+                <td>
+                  <form action="{{ url_for('delete_informasi', layer_id=i.id) }}" method="post"
+                    onsubmit="return confirm('Hapus layer ini?');">
+                    <button type="submit" class="btn-delete">
+                      <i class="fas fa-trash"></i> Hapus
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p style="font-size:0.8rem; opacity:0.8;">
+          Belum ada layer informasi tambahan di database.
+        </p>
+        {% endif %}
+      </section>
+    </div>
+
+  </div>
+</body>
+
+</html>

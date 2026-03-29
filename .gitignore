@@ -1,0 +1,49 @@
+# Environment
+.env
+.env.*
+
+# Separate System project (tidak terkait WebGIS)
+System/
+
+# Presentasi file
+Presentasi_*.md
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Data folder (semua data SHP sudah di Supabase)
+data/
+
+# Temporary upload/extract folders
+tmp_uploads/
+tmp_extracted/
+static/extracted/
+static/uploads/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Test files
+test_*.py
+tes_db.py
+check_db.py
+suai.py
+app3.py
+
+# Unused templates
+templates/tes.html
+templates/index3.html
+templates/admin3.html
+templates/admin.txt
+base.html

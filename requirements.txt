@@ -1,0 +1,11 @@
+Flask==3.0.0
+geopandas==0.14.1
+python-dotenv==1.0.0
+psycopg2-binary==2.9.9
+Werkzeug==3.0.1
+shapely==2.0.2
+pyproj==3.6.1
+fiona==1.9.5
+numpy==1.24.3
+pandas==2.1.4
+requests==2.31.0

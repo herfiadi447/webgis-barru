@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Admin - Geo AI WebGIS Barru</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, #bbf7d0 0, #f4f5f7 55%);
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.2);
+      padding: 24px 26px;
+      width: 360px;
+    }
+    .title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .title-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      background: #22c55e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #14532d;
+    }
+    h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #14532d;
+    }
+    p.sub {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-bottom: 14px;
+    }
+    label {
+      font-size: 0.8rem;
+      margin-bottom: 4px;
+      display: block;
+    }
+    input {
+      width: 100%;
+      padding: 8px 9px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+    input:focus {
+      outline: none;
+      border-color: #22c55e;
+      box-shadow: 0 0 0 1px #bbf7d0;
+    }
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      padding: 9px 0;
+      background: #14532d;
+      color: #ffffff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+    button:hover {
+      background: #166534;
+    }
+    .flash {
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      padding: 6px 8px;
+      font-size: 0.8rem;
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+    .back-link {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 0.8rem;
+    }
+    .back-link a {
+      color: #14532d;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="title">
+      <div class="title-icon">
+        <i class="fas fa-user-shield"></i>
+      </div>
+      <div>
+        <h1>Login Admin</h1>
+        <p class="sub">Masuk untuk mengelola layer peta & akun admin.</p>
+      </div>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="flash">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" action="{{ url_for('login') }}">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required />
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required />
+
+      <button type="submit">
+        <i class="fas fa-sign-in-alt"></i> Login
+      </button>
+    </form>
+
+    <div class="back-link">
+      <a href="{{ url_for('index') }}">
+        <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+      </a>
+    </div>
+  </div>
+</body>
+</html>

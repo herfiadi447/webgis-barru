@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Geo AI WebGIS - Barru</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #f4f5f7;
+      color: #1f2933;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1200;
+      background: #14532d;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: #22c55e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #14532d;
+    }
+
+    .nav-title {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .nav-sub {
+      font-size: 0.75rem;
+      opacity: 0.9;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 18px;
+      font-size: 0.9rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      opacity: 0.9;
+      padding-bottom: 2px;
+      border-bottom: 2px solid transparent;
+    }
+
+    .nav-links a:hover {
+      border-bottom-color: #bbf7d0;
+    }
+
+    .nav-login {
+      background: #22c55e;
+      color: #0f172a;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-login:hover {
+      background: #a3e635;
+    }
+
+    /* GeoAI Button Style */
+    .btn-geoai {
+      background: #22c55e;
+      color: #0f172a;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-geoai:hover {
+      background: #a3e635;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+    }
+
+    .btn-geoai i {
+      font-size: 1.1rem;
+    }
+
+    @media (max-width: 800px) {
+      .nav-links {
+        display: none;
+      }
+    }
+
+    /* MAIN WRAPPER */
+    .page {
+      max-width: 1200px;
+      margin: 80px auto 24px auto;
+      padding: 0 16px 24px 16px;
+    }
+
+    /* FLASH */
+    .flash-messages {
+      margin-bottom: 10px;
+    }
+
+    .flash {
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      border-radius: 4px;
+      padding: 8px 10px;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+
+    /* BERANDA (MAP) */
+    section {
+      margin-bottom: 40px;
+    }
+
+    #beranda-card {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 960px) {
+      #beranda-card {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .beranda-left h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #14532d;
+    }
+
+    .beranda-sub {
+      font-size: 0.85rem;
+      opacity: 0.8;
+      margin-bottom: 12px;
+    }
+
+    /* Tabs untuk kategori layer */
+    .layer-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .layer-tab {
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: #6b7280;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s;
+    }
+
+    .layer-tab:hover {
+      color: #14532d;
+    }
+
+    .layer-tab.active {
+      color: #14532d;
+      border-bottom-color: #22c55e;
+    }
+
+    .layer-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-radius: 8px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+
+    .layer-item {
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .layer-item:nth-child(odd) {
+      background: #f3f4f6;
+    }
+
+    .layer-item:hover {
+      background: #e5f9ec;
+    }
+
+    .layer-item.active {
+      background: #dcfce7;
+      border-left: 3px solid #22c55e;
+    }
+
+    .layer-meta {
+      font-size: 0.7rem;
+      opacity: 0.7;
+    }
+
+    .layer-btn {
+      background: #14532d;
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      font-size: 0.75rem;
+      padding: 5px 10px;
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .layer-btn:hover {
+      background: #166534;
+    }
+
+    .map-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    #map {
+      flex: 1;
+      min-height: 480px;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
+
+    .map-toolbar {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+
+    /* PARAMETER LAHAN */
+    #parameter-lahan {
+      background: #ffffff;
+      padding: 18px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+    }
+
+    .param-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .param-header h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #14532d;
+    }
+
+    .param-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .param-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .param-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .param-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .param-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #dcfce7;
+      color: #166534;
+      margin-bottom: 4px;
+    }
+
+    .param-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .param-text {
+      font-size: 0.8rem;
+      color: #486eaa;
+      margin-top: 4px;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 6;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .param-expanded .param-text {
+      display: block;
+      -webkit-line-clamp: unset;
+      -webkit-box-orient: unset;
+      overflow: visible;
+      max-height: none;
+      height: auto;
+    }
+
+    .param-more-btn {
+      margin-top: 6px;
+      align-self: flex-start;
+      font-size: 0.8rem;
+      color: #15803d;
+      background: transparent;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .param-more-btn:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      margin-top: 8px;
+      font-size: 0.75rem;
+      opacity: 0.7;
+      text-align: center;
+      padding: 8px 0;
+    }
+
+    /* Hide class untuk tab content */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Modal Styles */
+    .modal-geoai {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-geoai.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content-geoai {
+      background-color: #f8f9fb;
+      border-radius: 1rem;
+      width: 90%;
+      max-width: 900px;
+      height: 80vh;
+      max-height: 700px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      animation: slideUp 0.3s ease;
+    }
+
+    .modal-header-geoai {
+      padding: 1.5rem;
+      border-bottom: 2px solid #e1e8ed;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+      border-radius: 1rem 1rem 0 0;
+    }
+
+    .modal-header-geoai h5 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #666;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .modal-close:hover {
+      background: #f1f3f5;
+      color: #333;
+    }
+
+    .modal-body-geoai {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #n8n-chat-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+
+    /* Chat Widget Styles dalam Modal */
+    .modal-geoai .n8n-chat__button,
+    .modal-geoai .n8n-chat__launcher {
+      display: none !important;
+    }
+
+    .modal-geoai .n8n-chat {
+      position: relative !important;
+      width: 100% !important;
+      height: 100% !important;
+      border: none !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+
+    .modal-geoai .n8n-chat__window {
+      position: relative !important;
+      width: 100% !important;
+      height: 100% !important;
+      border: none !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: none !important;
+      pointer-events: auto !important;
+    }
+
+    .modal-geoai .n8n-chat__header {
+      display: none !important;
+    }
+
+    .modal-geoai .n8n-chat__messages {
+      background: #f8f9fb !important;
+      padding: 1.5rem !important;
+      overflow-y: auto !important;
+      flex: 1 !important;
+    }
+
+    .modal-geoai .n8n-chat__message--user {
+      background: #6c63ff !important;
+      color: white !important;
+      border-radius: 1.2rem 1.2rem 0.3rem 1.2rem !important;
+      padding: 0.8rem 1.2rem !important;
+      box-shadow: 0 2px 8px rgba(108, 99, 255, 0.25) !important;
+      max-width: 70% !important;
+      margin-left: auto !important;
+      margin-bottom: 1rem !important;
+    }
+
+    .modal-geoai .n8n-chat__message--bot {
+      background: white !important;
+      color: #2c3e50 !important;
+      border-radius: 1.2rem 1.2rem 1.2rem 0.3rem !important;
+      padding: 0.8rem 1.2rem !important;
+      border: 1px solid #e1e8ed !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+      max-width: 70% !important;
+      margin-right: auto !important;
+      margin-bottom: 1rem !important;
+    }
+
+    .modal-geoai .n8n-chat__input {
+      border-top: 2px solid #e1e8ed !important;
+      background: white !important;
+      padding: 1rem 1.5rem !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 0.8rem !important;
+    }
+
+    .modal-geoai .n8n-chat__input textarea,
+    .modal-geoai .n8n-chat__input input {
+      border: 2px solid #e1e8ed !important;
+      border-radius: 1.5rem !important;
+      padding: 0.8rem 1.2rem !important;
+      font-size: 0.95rem !important;
+      flex: 1 !important;
+      resize: none !important;
+      transition: all 0.3s ease !important;
+    }
+
+    .modal-geoai .n8n-chat__input textarea:focus,
+    .modal-geoai .n8n-chat__input input:focus {
+      outline: none !important;
+      border-color: #6c63ff !important;
+      box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.1) !important;
+    }
+
+    .modal-geoai .n8n-chat__send-button {
+      background: #6c63ff !important;
+      color: white !important;
+      border: none !important;
+      border-radius: 50% !important;
+      width: 48px !important;
+      height: 48px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      cursor: pointer !important;
+      transition: all 0.3s ease !important;
+    }
+
+    .modal-geoai .n8n-chat__send-button:hover {
+      background: #5b54e3 !important;
+      transform: scale(1.08) !important;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .modal-content-geoai {
+        width: 95%;
+        height: 90vh;
+        max-height: none;
+      }
+
+      .btn-geoai span {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <div class="nav-brand">
+        <div class="nav-logo">
+          <i class="fas fa-seedling"></i>
+        </div>
+        <div>
+          <div class="nav-title">Geo AI WebGIS - Barru</div>
+          <div class="nav-sub">Analisis Kesesuaian Lahan Komoditas Semangka • Skripsi</div>
+        </div>
+      </div>
+
+      <div class="nav-links">
+        <a href="#beranda">Beranda</a>
+        <a href="#parameter-lahan">Parameter Lahan</a>
+        <a href="#distribusi-kesesuaian">Distribusi Kesesuaian</a>
+
+        <!-- Linda-AI Button -->
+        <button class="btn-geoai" id="btn-launch-geoai">
+          <i class="fas fa-robot"></i>
+          <span>Linda-AI</span>
+        </button>
+
+        {% if user %}
+        <span style="font-size:0.8rem; opacity:0.9;">Halo, {{ user }}</span>
+        <a href="{{ url_for('admin') }}" class="nav-login">
+          <i class="fas fa-sliders"></i> Admin
+        </a>
+        <!-- Linda-AI Button -->
+        <button class="btn-geoai" id="btn-launch-geoai">
+          <i class="fas fa-robot"></i>
+          <span>Linda-AI</span>
+        </button>
+        <a href="{{ url_for('logout') }}" style="font-size:0.8rem;">Logout</a>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="nav-login">
+          <i class="fas fa-user-lock"></i> Login
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <main class="page">
+    <!-- FLASH -->
+    <div class="flash-messages">
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      {% for msg in messages %}
+      <div class="flash">{{ msg }}</div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+    </div>
+
+    <!-- BERANDA -->
+    <section id="beranda">
+      <div id="beranda-card">
+        <div class="beranda-left">
+          <h2>Beranda & Peta Kesesuaian Lahan</h2>
+          <p class="beranda-sub">
+            Pilih layer pada daftar di bawah untuk ditampilkan pada peta. Warna poligon
+            mengikuti kelas kesesuaian (S1, S2, S3, N, dan tanpa nilai).
+          </p>
+
+          <h3 style="font-size:0.9rem; margin-bottom:6px;">
+            <i class="fas fa-layer-group"></i> Daftar Layer
+          </h3>
+
+          <!-- Tabs untuk kategori -->
+          <div class="layer-tabs">
+            <button class="layer-tab active" data-tab="parameter">
+              <i class="fas fa-layer-group"></i> Parameter
+            </button>
+            <button class="layer-tab" data-tab="kesesuaian">
+              <i class="fas fa-check-circle"></i> Kesesuaian
+            </button>
+            <button class="layer-tab" data-tab="informasi">
+              <i class="fas fa-info-circle"></i> Informasi
+            </button>
+          </div>
+
+          <!-- Tab Content: Parameter -->
+          <div class="tab-content active" id="tab-parameter">
+            {% if layers and layers|length > 0 %}
+            <ul class="layer-list" data-category="parameter">
+              {% for lyr in layers %}
+              <li class="layer-item" data-layer-id="{{ lyr.id }}" data-category="parameter">
+                <div>
+                  <div><strong>{{ lyr.layer_name }}</strong></div>
+                  {% if lyr.description %}
+                  <div class="layer-meta">{{ lyr.description }}</div>
+                  {% endif %}
+                  {% if lyr.created_at %}
+                  <div class="layer-meta">
+                    Dibuat: {{ lyr.created_at.strftime('%Y-%m-%d %H:%M') }}
+                  </div>
+                  {% endif %}
+                </div>
+                <button class="layer-btn" type="button">
+                  <i class="fas fa-map"></i> Tampilkan
+                </button>
+              </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <p style="font-size:0.8rem; opacity:0.8;">
+              Belum ada layer parameter tersimpan.
+            </p>
+            {% endif %}
+          </div>
+
+          <!-- Tab Content: Kesesuaian Lahan -->
+          <div class="tab-content" id="tab-kesesuaian">
+            {% if kesesuaian and kesesuaian|length > 0 %}
+            <ul class="layer-list" data-category="kesesuaian">
+              {% for k in kesesuaian %}
+              <li class="layer-item" data-layer-id="{{ k.id }}" data-category="kesesuaian">
+                <div>
+                  <div><strong>{{ k.layer_name }}</strong></div>
+                  {% if k.description %}
+                  <div class="layer-meta">{{ k.description }}</div>
+                  {% endif %}
+                  {% if k.created_at %}
+                  <div class="layer-meta">
+                    Dibuat: {{ k.created_at.strftime('%Y-%m-%d %H:%M') }}
+                  </div>
+                  {% endif %}
+                </div>
+                <button class="layer-btn" type="button">
+                  <i class="fas fa-map"></i> Tampilkan
+                </button>
+              </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <p style="font-size:0.8rem; opacity:0.8;">
+              Belum ada layer kesesuaian tersimpan.
+            </p>
+            {% endif %}
+          </div>
+
+          <!-- Tab Content: Informasi Tambahan -->
+          <div class="tab-content" id="tab-informasi">
+            {% if informasi and informasi|length > 0 %}
+            <ul class="layer-list" data-category="informasi">
+              {% for i in informasi %}
+              <li class="layer-item" data-layer-id="{{ i.id }}" data-category="informasi">
+                <div>
+                  <div><strong>{{ i.layer_name }}</strong></div>
+                  {% if i.description %}
+                  <div class="layer-meta">{{ i.description }}</div>
+                  {% endif %}
+                  {% if i.created_at %}
+                  <div class="layer-meta">
+                    Dibuat: {{ i.created_at.strftime('%Y-%m-%d %H:%M') }}
+                  </div>
+                  {% endif %}
+                </div>
+                <button class="layer-btn" type="button">
+                  <i class="fas fa-map"></i> Tampilkan
+                </button>
+              </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <p style="font-size:0.8rem; opacity:0.8;">
+              Belum ada layer informasi tambahan tersimpan.
+            </p>
+            {% endif %}
+          </div>
+
+        </div>
+
+        <div class="map-wrapper">
+          <div class="map-toolbar">
+            <div>
+              <strong>Peta Utama</strong>
+              <span id="currentLayerLabel" style="margin-left:6px;">
+                (belum ada layer dipilih)
+              </span>
+            </div>
+            <div>Basemap: OpenStreetMap • Koordinat: WGS84 (EPSG:4326)</div>
+          </div>
+          <div id="map"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PARAMETER LAHAN -->
+    <section id="parameter-lahan">
+      <div class="param-header">
+        <div>
+          <h2>Parameter Lahan yang Digunakan</h2>
+          <p style="font-size:0.85rem; opacity:0.8;">
+            Ringkasan kriteria yang memengaruhi kelas kesesuaian (S1, S2, S3, N).
+            Teks ini bisa kamu edit sesuai bab metodologi skripsi.
+          </p>
+        </div>
+      </div>
+
+      <div class="param-grid">
+        {% if params and params|length > 0 %}
+        {% for p in params %}
+        <div class="param-card">
+          <div class="param-tag">
+            <i class="fas {{ p.icon_class or 'fa-circle-info' }}"></i>
+            {{ p.tag_label }}
+          </div>
+          <div class="param-title">{{ p.title }}</div>
+          <div class="param-text">
+            {{ p.description | replace('\n', '<br>') | safe }}
+          </div>
+          <button type="button" class="param-more-btn">
+            Tampilkan lebih banyak
+          </button>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p style="font-size:0.8rem; opacity:0.8;">
+          Belum ada parameter lahan yang tersimpan. Tambahkan melalui menu <strong>Login &gt; Admin</strong>.
+        </p>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- DISTRIBUSI KESESUAIAN LAHAN -->
+    <section id="distribusi-kesesuaian">
+      <div
+        style="background: #ffffff; padding: 18px; border-radius: 12px; box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);">
+        <div class="param-header">
+          <div>
+            <h2>Distribusi Kesesuaian Lahan per Kecamatan</h2>
+            <p style="font-size:0.85rem; opacity:0.8;">
+              Visualisasi luas area (hektar) untuk setiap kelas kesesuaian di masing-masing kecamatan.
+            </p>
+          </div>
+        </div>
+
+        <div id="loading-chart" style="text-align:center; padding:40px; display:none;">
+          <i class="fas fa-spinner fa-spin" style="font-size:2rem; color:#14532d;"></i>
+          <p style="margin-top:10px; font-size:0.9rem;">Memuat data...</p>
+        </div>
+
+        <div id="no-data-chart" style="text-align:center; padding:40px; display:none; opacity:0.7;">
+          <i class="fas fa-exclamation-circle" style="font-size:2rem; color:#f59e0b;"></i>
+          <p style="margin-top:10px; font-size:0.9rem;">
+            Belum ada data kesesuaian lahan. Upload layer kesesuaian melalui <strong>Admin</strong>.
+          </p>
+        </div>
+
+        <div id="chart-container" style="display:none;">
+          <!-- Dropdown untuk pilih kecamatan -->
+          <div style="margin-bottom:16px;">
+            <label for="select-kecamatan" style="font-size:0.9rem; font-weight:600; margin-right:8px;">
+              Pilih Kecamatan:
+            </label>
+            <select id="select-kecamatan"
+              style="padding:6px 12px; border-radius:6px; border:1px solid #d1d5db; font-size:0.85rem;">
+              <option value="">-- Pilih Kecamatan --</option>
+            </select>
+          </div>
+
+          <!-- Canvas untuk Chart.js -->
+          <div style="max-width:500px; margin:0 auto;">
+            <canvas id="donutChart"></canvas>
+          </div>
+
+          <!-- Info tambahan -->
+          <div id="chart-info"
+            style="margin-top:16px; padding:12px; background:#f9fafb; border-radius:6px; font-size:0.85rem;">
+            <strong>Total Luas:</strong> <span id="total-luas">0</span> Ha
+          </div>
+
+          <!-- Container Bar Chart per Desa -->
+          <div style="margin-top: 3rem; border-top: 1px solid #e5e7eb; padding-top: 2rem;">
+            <h3 style="font-size: 1.1rem; font-weight: 600; color: #166534; margin-bottom: 0.5rem;">Total Luas Kelas
+              Kesesuaian per Desa</h3>
+            <p style="font-size: 0.85rem; color: #4b5563; margin-bottom: 1.5rem;">Distribusi area (Hektar) untuk setiap
+              desa di kecamatan terpilih.</p>
+            <div style="width: 100%; height: 400px; position: relative;">
+              <canvas id="barChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      © {{ 2025 }} Geo AI WebGIS Barru • Halaman publik.
+      Upload & pengelolaan data dilakukan melalui menu <strong>Login &gt; Admin</strong>.
+    </footer>
+  </main>
+
+  <!-- GeoAI Modal -->
+  <div id="modal-geoai" class="modal-geoai">
+    <div class="modal-content-geoai">
+      <div class="modal-header-geoai">
+        <h5>
+          <i class="fas fa-robot" style="color: #4baa4b;"></i>
+          Linda-AI Assistant
+        </h5>
+        <button class="modal-close" id="btn-close-geoai">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body-geoai">
+        <div id="n8n-chat-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    // ==== 1. PARAMETER: Kelas S1–S3–N (pakai layer parameter) ====
+    function getSuitabilityClassParameter(props) {
+      if (!props) return "NONE";
+
+      let s1Key = null;
+      let s2Key = null;
+      let s3Key = null;
+      let nKey = null;
+
+      for (const key in props) {
+        const lower = key.toLowerCase();
+
+        // abaikan kolom non-kelas
+        if (
+          lower.includes("luas") ||
+          lower.includes("kecamatan") ||
+          lower.includes("tekstur")
+        ) {
+          continue;
+        }
+
+        // pola lama
+        if (!s1Key && lower.startsWith("s1")) { s1Key = key; continue; }
+        if (!s2Key && lower.startsWith("s2")) { s2Key = key; continue; }
+        if (!s3Key && lower.startsWith("s3")) { s3Key = key; continue; }
+        if (!nKey && (lower === "n" || lower.startsWith("n_"))) { nKey = key; continue; }
+
+        // pola baru (tekstual)
+        if (!s1Key && lower.includes("sangat")) {
+          s1Key = key;
+        } else if (!s3Key && (lower.includes("mar") || lower.includes("marg"))) {
+          s3Key = key; // sesuai marginal
+        } else if (!nKey && (lower.includes("tidak") || lower.startsWith("n "))) {
+          nKey = key;
+        } else if (!s2Key && lower.includes("sesuai")) {
+          s2Key = key; // sisanya "sesuai" → S2
+        }
+      }
+
+      const val = (k) => {
+        if (!k) return 0;
+        const raw = props[k];
+        if (raw === null || raw === undefined || raw === "") return 0;
+        const num = Number(raw);
+        return isNaN(num) ? 0 : num;
+      };
+
+      if (s1Key && val(s1Key) !== 0) return "S1";
+      if (s2Key && val(s2Key) !== 0) return "S2";
+      if (s3Key && val(s3Key) !== 0) return "S3";
+      if (nKey && val(nKey) !== 0) return "N";
+      return "NONE";
+    }
+
+    function getColorForParamClass(kelas) {
+      switch (kelas) {
+        case "S1":
+          return { fill: "#22c55e", stroke: "#15803d" };
+        case "S2":
+          return { fill: "#facc15", stroke: "#b45309" };
+        case "S3":
+          return { fill: "#f97316", stroke: "#c2410c" };
+        case "N":
+          return { fill: "#ef4444", stroke: "#b91c1c" };
+        default:
+          return { fill: "#f2f2f2", stroke: "#9ca3af" };
+      }
+    }
+
+    // ==== 2. KESESUAIAN AKHIR: kolom "Kelas" (Sesuai, Sesuai Marginal, Tidak Sesuai, dll) ====
+    function getFinalClass(props) {
+      if (!props) return "NONE";
+      let kelasKey = null;
+
+      for (const key in props) {
+        if (key.toLowerCase().includes("kelas")) {
+          kelasKey = key;
+          break;
+        }
+      }
+      if (!kelasKey) return "NONE";
+
+      const raw = String(props[kelasKey] || "").toLowerCase().trim();
+      if (!raw) return "NONE";
+
+      // Urutan pengecekan sangat penting
+      if (raw.includes("lindung")) return "LINDUNG";
+      if (raw.includes("tidak")) return "TIDAK";
+      if (raw.includes("marg")) return "MAR";
+      if (raw.includes("sangat")) return "SANGAT";
+      if (raw.includes("sesuai")) return "SES"; // sesuai saja
+      return "NONE";
+    }
+
+    function getColorForFinalClass(code) {
+      switch (code) {
+        case "SANGAT":  // Sangat Sesuai (S1)
+          return { fill: "#166534", stroke: "#14532d" }; // Hijau Tua
+        case "SES":    // Sesuai (S2)
+          return { fill: "#22c55e", stroke: "#15803d" }; // Hijau Terang
+        case "MAR":    // Sesuai Marginal (S3)
+          return { fill: "#facc15", stroke: "#b45309" }; // Kuning
+        case "TIDAK":  // Tidak Sesuai (N)
+          return { fill: "#ef4444", stroke: "#b91c1c" }; // Merah
+        case "LINDUNG": // Kawasan Lindung / 0
+          return { fill: "#e5e7eb", stroke: "#9ca3af" }; // Sesuai dengan chart (Abu-abu terang)
+        default:       // Tanpa Nilai
+          return { fill: "#e5e7eb", stroke: "#9ca3af" }; // Abu-abu
+      }
+    }
+
+    // ==== 3. WARNA UNTUK LAYER INFORMASI (ADMINISTRASI / KECAMATAN) ====
+    let infoColorMap = {}; // { keyLower: {label, color} }
+    const infoPalette = [
+      "#fecaca", "#7dd3fc", "#6ee7b7", "#fde047", "#a78bfa",
+      "#f9a8d4", "#d4d4d8", "#4ade80", "#f472b6", "#9ca3af"
+    ];
+
+    function resetInfoColors() {
+      infoColorMap = {};
+    }
+
+    function getInfoColor(name) {
+      if (!name) name = "Lainnya";
+      const label = String(name);
+      const key = label.toLowerCase();
+
+      if (!infoColorMap[key]) {
+        const used = Object.keys(infoColorMap).length;
+        const color = infoPalette[used % infoPalette.length];
+        infoColorMap[key] = { label, color };
+      }
+      return infoColorMap[key].color;
+    }
+
+    // ==== 4. MAP GLOBAL VARS + LEGEND DINAMIS ====
+    let map;
+    let currentLayer;
+    let activeLayerId = null;
+    let activeCategory = null;
+    const layerCache = {};
+
+    let legendControl;
+    let legendDiv;
+
+    function resetLayerListUI() {
+      document.querySelectorAll(".layer-item").forEach((li) => {
+        li.classList.remove("active");
+        const b = li.querySelector(".layer-btn");
+        if (b) {
+          b.innerHTML = '<i class="fas fa-map"></i> Tampilkan';
+        }
+      });
+    }
+
+    // Update legend sesuai mode
+    function updateLegend(mode) {
+      if (!legendDiv) return;
+
+      let html =
+        '<div style="background:white;padding:6px 8px;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,0.3);font-size:0.8rem;">';
+
+      if (mode === "kesesuaian") {
+        html += '<div style="margin-bottom:4px;"><strong>Kelas Kesesuaian Akhir</strong></div>';
+        const items = [
+          { label: "Sangat Sesuai", code: "SANGAT" },
+          { label: "Sesuai", code: "SES" },
+          { label: "Sesuai Marginal", code: "MAR" },
+          { label: "Tidak Sesuai", code: "TIDAK" },
+          { label: "Kawasan Lindung", code: "LINDUNG" },
+          { label: "Tanpa Nilai", code: "NONE" },
+        ];
+        items.forEach((item) => {
+          const c = getColorForFinalClass(item.code);
+          html += `
+            <div style="display:flex;align-items:center;margin-bottom:3px;">
+              <span style="width:14px;height:14px;background:${c.fill};border:1px solid ${c.stroke};display:inline-block;margin-right:6px;"></span>
+              <span>${item.label}</span>
+            </div>`;
+        });
+      } else if (mode === "informasi") {
+        html += '<div style="margin-bottom:4px;"><strong>Kecamatan</strong></div>';
+
+        const vals = Object.values(infoColorMap);
+        if (vals.length === 0) {
+          html += '<div><em>Aktifkan layer informasi</em></div>';
+        } else {
+          vals.forEach((item) => {
+            html += `
+              <div style="display:flex;align-items:center;margin-bottom:3px;">
+                <span style="width:14px;height:14px;background:${item.color};border:1px solid #4b5563;display:inline-block;margin-right:6px;"></span>
+                <span>${item.label}</span>
+              </div>`;
+          });
+        }
+      } else {
+        // default: parameter S1–S3–N
+        html += '<div style="margin-bottom:4px;"><strong>Kelas Kesesuaian (S1–N)</strong></div>';
+        const items = [
+          { label: "Sangat Sesuai (S1)", kelas: "S1" },
+          { label: "Sesuai (S2)", kelas: "S2" },
+          { label: "Sesuai Marginal (S3)", kelas: "S3" },
+          { label: "Tidak Sesuai (N)", kelas: "N" },
+          { label: "Tanpa Nilai", kelas: "NONE" },
+        ];
+        items.forEach((item) => {
+          const c = getColorForParamClass(item.kelas);
+          html += `
+            <div style="display:flex;align-items:center;margin-bottom:3px;">
+              <span style="width:14px;height:14px;background:${c.fill};border:1px solid ${c.stroke};display:inline-block;margin-right:6px;"></span>
+              <span>${item.label}</span>
+            </div>`;
+        });
+      }
+
+      html += "</div>";
+      legendDiv.innerHTML = html;
+    }
+
+    function toggleLayer(id, name, category, item, labelElement) {
+      const cacheKey = `${category}-${id}`;
+
+      // klik lagi = matikan
+      if (activeLayerId === cacheKey) {
+        if (currentLayer) {
+          map.removeLayer(currentLayer);
+          currentLayer = null;
+        }
+        activeLayerId = null;
+        activeCategory = null;
+        resetLayerListUI();
+        if (labelElement) {
+          labelElement.textContent = "(belum ada layer dipilih)";
+        }
+        updateLegend("default");
+        return;
+      }
+
+      resetLayerListUI();
+      item.classList.add("active");
+      const btn = item.querySelector(".layer-btn");
+      if (btn) {
+        btn.innerHTML = '<i class="fas fa-eye-slash"></i> Sembunyikan';
+      }
+
+      loadLayer(id, name, category, labelElement);
+      activeLayerId = cacheKey;
+      activeCategory = category;
+    }
+
+    // Tab switching + init map
+    document.addEventListener("DOMContentLoaded", function () {
+      const tabs = document.querySelectorAll(".layer-tab");
+      const contents = document.querySelectorAll(".tab-content");
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const targetTab = tab.dataset.tab;
+
+          tabs.forEach((t) => t.classList.remove("active"));
+          contents.forEach((c) => c.classList.remove("active"));
+
+          tab.classList.add("active");
+          document.getElementById(`tab-${targetTab}`).classList.add("active");
+        });
+      });
+
+      // Map
+      map = L.map("map").setView([-4.47, 119.61], 11);
+
+      const osmLayer = L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          maxZoom: 19,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/">OSM</a>',
+        }
+      );
+
+      const googleSat = L.tileLayer(
+        "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+        {
+          maxZoom: 20,
+          attribution: "Imagery © Google",
+        }
+      );
+
+      const googleHybrid = L.tileLayer(
+        "https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}",
+        {
+          maxZoom: 20,
+          attribution: "Imagery © Google",
+        }
+      );
+
+      osmLayer.addTo(map);
+
+      L.control
+        .layers(
+          {
+            "Peta Jalan": osmLayer,
+            "Google Satelit": googleSat,
+            "Google Hybrid": googleHybrid,
+          },
+          {},
+          { position: "topright" }
+        )
+        .addTo(map);
+
+      const layerItems = document.querySelectorAll(".layer-item");
+      const label = document.getElementById("currentLayerLabel");
+
+      layerItems.forEach((item) => {
+        const id = item.getAttribute("data-layer-id");
+        const category = item.getAttribute("data-category");
+        const name = item.querySelector("strong").textContent;
+        const btn = item.querySelector(".layer-btn");
+
+        const handler = (evt) => {
+          if (evt) evt.stopPropagation();
+          toggleLayer(id, name, category, item, label);
+        };
+
+        if (btn) {
+          btn.addEventListener("click", handler);
+        }
+
+        item.addEventListener("click", (evt) => {
+          if (evt.target.closest(".layer-btn")) return;
+          handler(evt);
+        });
+      });
+
+      // Legend control (dinamis)
+      legendControl = L.control({ position: "bottomright" });
+      legendControl.onAdd = function () {
+        legendDiv = L.DomUtil.create("div", "info legend");
+        updateLegend("default");
+        return legendDiv;
+      };
+      legendControl.addTo(map);
+    });
+
+    function loadLayer(id, name, category, labelElement) {
+      const cacheKey = `${category}-${id}`;
+
+      const renderGeoJSON = (geojson) => {
+        if (currentLayer) {
+          map.removeLayer(currentLayer);
+        }
+
+        // Reset warna info jika kategori informasi
+        if (category === "informasi") {
+          resetInfoColors();
+        }
+
+        currentLayer = L.geoJSON(geojson, {
+          onEachFeature: function (feature, layer) {
+            const props = feature.properties || {};
+            let rows = Object.entries(props)
+              .map(([k, v]) => `<tr><td><strong>${k}</strong></td><td>${v}</td></tr>`)
+              .join("");
+            if (!rows)
+              rows =
+                "<tr><td colspan='2'><em>Tidak ada atribut</em></td></tr>";
+            const html = `
+              <div style="max-height:200px; overflow:auto;">
+                <table style="border-collapse:collapse; width:100%; font-size:0.8rem;">
+                  ${rows}
+                </table>
+              </div>`;
+            layer.bindPopup(html);
+          },
+
+          style: function (feature) {
+            const props = feature.properties || {};
+
+            // 1) Informasi → warna per kecamatan (NAMOBJ)
+            if (category === "informasi") {
+              const namaKec =
+                props.Kecamatan || props.namobj || props.NAMOBJ_KAB || "Lainnya";
+              const fill = getInfoColor(namaKec);
+
+              return {
+                color: "#4b5563",
+                weight: 1,
+                fillColor: fill,
+                fillOpacity: 0.5,
+              };
+            }
+
+            // 2) Kesesuaian akhir → kolom "Kelas"
+            if (category === "kesesuaian") {
+              const kode = getFinalClass(props);
+              const c = getColorForFinalClass(kode);
+              return {
+                color: c.stroke,
+                weight: 1,
+                fillColor: c.fill,
+                fillOpacity: 0.8,
+              };
+            }
+
+            // 3) Parameter → S1–S3–N
+            const kelas = getSuitabilityClassParameter(props);
+            const c = getColorForParamClass(kelas);
+            return {
+              color: c.stroke,
+              weight: 1,
+              fillColor: c.fill,
+              fillOpacity: 0.8,
+            };
+          },
+        }).addTo(map);
+
+        try {
+          const bounds = currentLayer.getBounds();
+          if (bounds.isValid()) {
+            map.fitBounds(bounds, { padding: [20, 20] });
+          }
+        } catch (e) {
+          console.warn("Tidak bisa fitBounds:", e);
+        }
+
+        if (labelElement) {
+          labelElement.textContent = `(layer aktif: ${name} - ${category})`;
+        }
+
+        // Update legenda sesuai kategori aktif
+        if (category === "kesesuaian") {
+          updateLegend("kesesuaian");
+        } else if (category === "informasi") {
+          updateLegend("informasi");
+        } else {
+          updateLegend("default");
+        }
+      };
+
+      // pakai cache kalau sudah pernah di-load
+      if (layerCache[cacheKey]) {
+        renderGeoJSON(layerCache[cacheKey]);
+        return;
+      }
+
+      let apiUrl;
+      if (category === "parameter") {
+        apiUrl = `/api/layers/${id}`;
+      } else if (category === "kesesuaian") {
+        apiUrl = `/api/kesesuaian/${id}`;
+      } else if (category === "informasi") {
+        apiUrl = `/api/informasi/${id}`;
+      }
+
+      fetch(apiUrl)
+        .then((res) => {
+          if (!res.ok) throw new Error("Gagal mengambil GeoJSON");
+          return res.json();
+        })
+        .then((geojson) => {
+          layerCache[cacheKey] = geojson;
+          renderGeoJSON(geojson);
+        })
+        .catch((err) => {
+          console.error(err);
+          alert("Gagal memuat layer. Cek console untuk detail error.");
+        });
+    }
+  </script>
+
+  <!-- n8n Chat Widget CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+
+  <!-- GeoAI Chat Script -->
+  <script type="module">
+    import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+
+    let chatInstance = null;
+    const modal = document.getElementById('modal-geoai');
+    const btnLaunch = document.getElementById('btn-launch-geoai');
+    const btnClose = document.getElementById('btn-close-geoai');
+
+    // Initialize chat saat halaman dimuat
+    function initializeChat() {
+      if (!chatInstance) {
+        chatInstance = createChat({
+          webhookUrl: 'https://n8n.geopangansidrap.id/webhook/ef3bb53d-b173-44e7-8ff1-da6fde56685a/chat',
+          initialMessages: [
+            'Halo! 👋',
+            'Saya Linda. Silakan tanya apa saja seputar sistem kesesuaian lahan ini.'
+          ],
+          i18n: {
+            en: {
+              title: '',
+              subtitle: '',
+              footer: '',
+              getStarted: 'Mulai Chat',
+              inputPlaceholder: 'Ketik pertanyaan Anda di sini...',
+            },
+          },
+          showWelcomeScreen: false,
+          loadPreviousSession: true,
+          mode: 'fullscreen',
+          target: '#n8n-chat-container',
+          theme: {
+            primaryColor: '#6c63ff',
+          }
+        });
+        console.log('GeoAI Chat initialized');
+      }
+    }
+
+    // Initialize chat saat halaman dimuat
+    window.addEventListener('DOMContentLoaded', function () {
+      setTimeout(initializeChat, 500);
+    });
+
+    // Open modal
+    btnLaunch.addEventListener('click', function () {
+      modal.classList.add('show');
+      if (!chatInstance) {
+        initializeChat();
+      }
+    });
+
+    // Close modal
+    btnClose.addEventListener('click', function () {
+      modal.classList.remove('show');
+    });
+
+    // Close modal when clicking outside
+    modal.addEventListener('click', function (e) {
+      if (e.target === modal) {
+        modal.classList.remove('show');
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && modal.classList.contains('show')) {
+        modal.classList.remove('show');
+      }
+    });
+  </script>
+
+  <script>
+    // Toggle "tampilkan lebih banyak / sedikit" untuk setiap kartu parameter
+    document.querySelectorAll(".param-card").forEach(function (card) {
+      const text = card.querySelector(".param-text");
+      const btn = card.querySelector(".param-more-btn");
+      if (!text || !btn) return;
+
+      if (text.scrollHeight <= text.clientHeight + 4) {
+        btn.style.display = "none";
+        return;
+      }
+
+      btn.addEventListener("click", function () {
+        const expanded = card.classList.toggle("param-expanded");
+        btn.textContent = expanded
+          ? "Tampilkan lebih sedikit"
+          : "Tampilkan lebih banyak";
+      });
+    });
+  </script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <script>
+    let donutChartInstance = null;
+    let barChartInstance = null;
+    let distribusiData = [];
+
+    // Warna untuk setiap kelas (sesuaikan dengan legend Anda)
+    const kelasColors = {
+      'Sesuai': '#22c55e',
+      'Sesuai Marginal': '#facc15',
+      'Tidak Sesuai': '#ef4444',
+      'Kawasan Lindung / Tidak Dinilai': '#e5e7eb',
+      'NONE': '#e5e7eb'
+    };
+
+    // Load data distribusi saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', function () {
+      loadDistribusiData();
+    });
+
+    function loadDistribusiData() {
+      const loadingEl = document.getElementById('loading-chart');
+      const noDataEl = document.getElementById('no-data-chart');
+      const containerEl = document.getElementById('chart-container');
+
+      loadingEl.style.display = 'block';
+      noDataEl.style.display = 'none';
+      containerEl.style.display = 'none';
+
+      fetch('/api/distribusi_kesesuaian')
+        .then(res => {
+          if (!res.ok) throw new Error('Gagal memuat data');
+          return res.json();
+        })
+        .then(data => {
+          loadingEl.style.display = 'none';
+
+          if (!data || data.length === 0) {
+            noDataEl.style.display = 'block';
+            return;
+          }
+
+          distribusiData = data;
+          populateKecamatanDropdown();
+          containerEl.style.display = 'block';
+        })
+        .catch(err => {
+          console.error('Error loading distribusi:', err);
+          loadingEl.style.display = 'none';
+          noDataEl.style.display = 'block';
+        });
+    }
+
+    function populateKecamatanDropdown() {
+      const select = document.getElementById('select-kecamatan');
+
+      // Ambil unique kecamatan
+      const kecamatanList = [...new Set(distribusiData.map(d => d.kecamatan))].sort();
+
+      // Clear existing options (except first)
+      select.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
+
+      kecamatanList.forEach(kec => {
+        const option = document.createElement('option');
+        option.value = kec;
+        option.textContent = kec;
+        select.appendChild(option);
+      });
+
+      // Event listener untuk perubahan dropdown
+      select.addEventListener('change', function () {
+        if (this.value) {
+          renderDonutChart(this.value);
+          renderBarChart(this.value);
+        } else {
+          if (donutChartInstance) {
+            donutChartInstance.destroy();
+            donutChartInstance = null;
+          }
+          if (barChartInstance) {
+            barChartInstance.destroy();
+            barChartInstance = null;
+          }
+          document.getElementById('total-luas').textContent = '0';
+        }
+      });
+
+      // Auto-select kecamatan pertama
+      if (kecamatanList.length > 0) {
+        select.value = kecamatanList[0];
+        renderDonutChart(kecamatanList[0]);
+        renderBarChart(kecamatanList[0]);
+      }
+    }
+
+    function renderDonutChart(kecamatan) {
+      // Filter data untuk kecamatan terpilih
+      const dataKec = distribusiData.filter(d => d.kecamatan === kecamatan);
+
+      if (dataKec.length === 0) {
+        alert('Tidak ada data untuk kecamatan ini');
+        return;
+      }
+
+      // Siapkan data untuk chart
+      const aggregated = {};
+      let totalLuas = 0;
+
+      dataKec.forEach(item => {
+        const kelas = normalizeKelasName(item.kelas);
+        if (!aggregated[kelas]) aggregated[kelas] = 0;
+
+        const luas = parseFloat(item.luas_ha) || 0;
+        aggregated[kelas] += luas;
+        totalLuas += luas;
+      });
+
+      const labels = Object.keys(aggregated);
+      const values = labels.map(k => aggregated[k].toFixed(2));
+      const colors = labels.map(k => kelasColors[k] || '#475569');
+
+      // Update info total luas
+      document.getElementById('total-luas').textContent = totalLuas.toFixed(2);
+
+      // Destroy chart lama jika ada
+      if (donutChartInstance) {
+        donutChartInstance.destroy();
+      }
+
+      // Buat chart baru
+      const ctx = document.getElementById('donutChart').getContext('2d');
+      donutChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: values,
+            backgroundColor: colors,
+            borderWidth: 2,
+            borderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 15,
+                font: {
+                  size: 12
+                }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  const label = context.label || '';
+                  const value = context.parsed || 0;
+                  const percentage = ((value / totalLuas) * 100).toFixed(1);
+                  return `${label}: ${value} Ha (${percentage}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function renderBarChart(kecamatan) {
+      // Filter data untuk kecamatan terpilih
+      const dataKec = distribusiData.filter(d => d.kecamatan === kecamatan);
+
+      if (dataKec.length === 0) return;
+
+      // Ambil desa-desa unik di kecamatan ini
+      const desaList = [...new Set(dataKec.map(d => d.desa))].sort();
+
+      // Struktur data untuk Chart.js Bar Chart (Stacked)
+      // Kita buat dataset per kelas kesesuaian
+      const datasets = [
+        { label: 'Sangat Sesuai', data: [], backgroundColor: '#166534' }, // Opsional jika ada
+        { label: 'Sesuai', data: [], backgroundColor: kelasColors['Sesuai'] },
+        { label: 'Sesuai Marginal', data: [], backgroundColor: kelasColors['Sesuai Marginal'] },
+        { label: 'Tidak Sesuai', data: [], backgroundColor: kelasColors['Tidak Sesuai'] },
+        { label: 'Kawasan Lindung / Tidak Dinilai', data: [], backgroundColor: kelasColors['Kawasan Lindung / Tidak Dinilai'] }, // Opsional
+        { label: 'NONE', data: [], backgroundColor: kelasColors['NONE'] }
+      ];
+
+      // Mapping label kelas standar ke index dataset
+      const classToIndex = {
+        'Sangat Sesuai': 0,
+        'Sesuai': 1,
+        'Sesuai Marginal': 2,
+        'Tidak Sesuai': 3,
+        'Kawasan Lindung / Tidak Dinilai': 4,
+        'NONE': 5
+      };
+
+      // Inisialisasi data 0 untuk semua desa dan kelas
+      datasets.forEach(ds => {
+        ds.data = new Array(desaList.length).fill(0);
+      });
+
+      // Isi array data sesuai desa dan kelasnya
+      dataKec.forEach(item => {
+        const desaIdx = desaList.indexOf(item.desa);
+        const kelas = normalizeKelasName(item.kelas);
+        const luas = parseFloat(item.luas_ha) || 0;
+
+        let targetIdx = classToIndex[kelas] !== undefined ? classToIndex[kelas] : 5;
+
+        // Pengecualian deteksi tambahan untuk kelas custom
+        if (item.kelas.includes('Sangat Sesuai')) targetIdx = 0;
+        if (item.kelas.toLowerCase().includes('lindung')) targetIdx = 4;
+
+        datasets[targetIdx].data[desaIdx] += luas;
+      });
+
+      // Buang dataset yang nilainya 0 di semua desa agar legend lebih bersih
+      const filteredDatasets = datasets.filter(ds => ds.data.some(val => val > 0));
+
+      // Destroy chart lama jika ada
+      if (barChartInstance) {
+        barChartInstance.destroy();
+      }
+
+      // Buat Bar Chart baru
+      const ctx = document.getElementById('barChart').getContext('2d');
+      barChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: desaList,
+          datasets: filteredDatasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              stacked: true,
+              grid: { display: false }
+            },
+            y: {
+              stacked: true,
+              title: {
+                display: true,
+                text: 'Luas Hektar (Ha)'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { padding: 15, font: { size: 12 } }
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+              callbacks: {
+                label: function (context) {
+                  let label = context.dataset.label || '';
+                  if (label) label += ': ';
+                  if (context.parsed.y !== null) {
+                    label += context.parsed.y.toFixed(2) + ' Ha';
+                  }
+                  return label;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function normalizeKelasName(kelas) {
+      if (!kelas || kelas === 'NONE') return 'Kawasan Lindung / Tidak Dinilai';
+
+      const lower = String(kelas).toLowerCase().trim();
+
+      if (lower.includes('lindung') || lower.includes('tidak dinilai')) return 'Kawasan Lindung / Tidak Dinilai';
+      if (lower.includes('tidak')) return 'Tidak Sesuai';
+      if (lower.includes('marg')) return 'Sesuai Marginal';
+      if (lower.includes('sesuai')) return 'Sesuai';
+
+      return 'Kawasan Lindung / Tidak Dinilai';
+    }
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,11 @@
+{# macro.jinja #}
+
+{# Untuk atribut title di tombol #}
+{% macro title(text) -%}
+title="{{ text }}"
+{%- endmacro %}
+
+{# Untuk konfirmasi hapus #}
+{% macro tanyahapus() -%}
+onclick="return confirm('Yakin ingin menghapus data ini?')"
+{%- endmacro %}
