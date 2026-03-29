@@ -5,10 +5,12 @@ import os
 import zipfile
 import shutil
 import json
+import gzip
+import hashlib
 
 from flask import (
     Flask, render_template, request,
-    redirect, url_for, flash, jsonify, session
+    redirect, url_for, flash, jsonify, session, make_response
 )
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -1087,6 +1089,39 @@ def api_layers():
     conn.close()
     return jsonify(layers)
 
+# -------------------------------------------------
+# Helper: Cached + Compressed JSON response
+# Data tidak diubah sama sekali, hanya cara pengiriman yang dioptimalkan
+# -------------------------------------------------
+def make_cached_json_response(data, max_age=3600):
+    """Buat response JSON dengan Cache-Control dan gzip compression.
+    max_age: berapa detik CDN boleh cache (default 1 jam).
+    stale-while-revalidate: sajikan cache lama sambil refresh di background.
+    """
+    json_bytes = json.dumps(data, separators=(',', ':')).encode('utf-8')
+    
+    # Generate ETag dari hash data untuk cache validation
+    etag = hashlib.md5(json_bytes).hexdigest()
+    
+    # Cek If-None-Match header dari browser
+    if request.headers.get('If-None-Match') == etag:
+        return make_response('', 304)
+    
+    # Gzip compress jika browser mendukung
+    accept_encoding = request.headers.get('Accept-Encoding', '')
+    if 'gzip' in accept_encoding:
+        compressed = gzip.compress(json_bytes, compresslevel=6)
+        response = make_response(compressed)
+        response.headers['Content-Encoding'] = 'gzip'
+    else:
+        response = make_response(json_bytes)
+    
+    response.headers['Content-Type'] = 'application/json'
+    response.headers['Cache-Control'] = f'public, max-age={max_age}, s-maxage={max_age}, stale-while-revalidate=86400'
+    response.headers['ETag'] = etag
+    response.headers['Vary'] = 'Accept-Encoding'
+    return response
+
 @app.route("/api/layers/<int:layer_id>")
 def api_layer_geojson(layer_id):
     conn = get_db_conn()
@@ -1108,7 +1143,7 @@ def api_layer_geojson(layer_id):
     if not row:
         return jsonify({"error": "Layer tidak ditemukan"}), 404
 
-    return jsonify(row["geojson"])
+    return make_cached_json_response(row["geojson"])
 
 # API untuk Kesesuaian Lahan
 @app.route("/api/kesesuaian/<int:layer_id>")
@@ -1132,7 +1167,7 @@ def api_kesesuaian_geojson(layer_id):
     if not row:
         return jsonify({"error": "Layer tidak ditemukan"}), 404
 
-    return jsonify(row["geojson"])
+    return make_cached_json_response(row["geojson"])
 
 # API untuk Informasi Tambahan
 @app.route("/api/informasi/<int:layer_id>")
@@ -1156,7 +1191,7 @@ def api_informasi_geojson(layer_id):
     if not row:
         return jsonify({"error": "Layer tidak ditemukan"}), 404
 
-    return jsonify(row["geojson"])
+    return make_cached_json_response(row["geojson"])
 
 @app.route("/api/distribusi_kesesuaian", methods=["GET"])
 def distribusi_kesesuaian():
