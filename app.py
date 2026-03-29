@@ -18,11 +18,12 @@ import requests
 
 # GeoPandas dan pandas: lazy import untuk serverless (Vercel)
 # Library ini sangat besar dan mungkin tidak tersedia di production
+# fiona bisa throw OSError (bukan ImportError) jika GDAL tidak ada
 try:
     import geopandas as gpd
     import pandas as pd
     HAS_GEOPANDAS = True
-except ImportError:
+except Exception:
     HAS_GEOPANDAS = False
 from functools import wraps
 
@@ -51,9 +52,11 @@ os.makedirs(EXTRACT_FOLDER, exist_ok=True)
 # -------------------------------------------------
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
-    raise RuntimeError("DATABASE_URL tidak ditemukan. Pastikan sudah diset di .env")
+    print("WARNING: DATABASE_URL tidak ditemukan. Pastikan sudah diset di environment variables.")
 
 def get_db_conn():
+    if not DATABASE_URL:
+        raise RuntimeError("DATABASE_URL belum diset.")
     return psycopg2.connect(DATABASE_URL)
 
 def init_db():
@@ -1147,6 +1150,8 @@ def api_informasi_geojson(layer_id):
 
 @app.route("/api/distribusi_kesesuaian", methods=["GET"])
 def distribusi_kesesuaian():
+    if not HAS_GEOPANDAS:
+        return jsonify({"error": "Library GeoPandas tidak tersedia di server ini."}), 503
     conn = get_db_conn()
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
