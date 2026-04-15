@@ -1667,9 +1667,10 @@
         totalLuas += luas;
       });
 
-      const labels = Object.keys(aggregated);
-      const values = labels.map(k => aggregated[k].toFixed(2));
-      const colors = labels.map(k => kelasColors[k] || '#475569');
+      const labelsRaw = Object.keys(aggregated);
+      const labels = typeof window.t_str === 'function' ? labelsRaw.map(k => window.t_str(k)) : labelsRaw;
+      const values = labelsRaw.map(k => aggregated[k].toFixed(2));
+      const colors = labelsRaw.map(k => kelasColors[k] || '#475569');
 
       // Update info total luas
       document.getElementById('total-luas').textContent = totalLuas.toFixed(2);
@@ -1731,13 +1732,15 @@
 
       // Struktur data untuk Chart.js Bar Chart (Stacked)
       // Kita buat dataset per kelas kesesuaian
+      const t = typeof window.t_str === 'function' ? window.t_str : (x => x);
+
       const datasets = [
-        { label: 'Sangat Sesuai', data: [], backgroundColor: '#166534' }, // Opsional jika ada
-        { label: 'Sesuai', data: [], backgroundColor: kelasColors['Sesuai'] },
-        { label: 'Sesuai Marginal', data: [], backgroundColor: kelasColors['Sesuai Marginal'] },
-        { label: 'Tidak Sesuai', data: [], backgroundColor: kelasColors['Tidak Sesuai'] },
-        { label: 'Kawasan Lindung / Tidak Dinilai', data: [], backgroundColor: kelasColors['Kawasan Lindung / Tidak Dinilai'] }, // Opsional
-        { label: 'NONE', data: [], backgroundColor: kelasColors['NONE'] }
+        { label: t('Sangat Sesuai'), data: [], backgroundColor: '#166534' }, // Opsional jika ada
+        { label: t('Sesuai'), data: [], backgroundColor: kelasColors['Sesuai'] },
+        { label: t('Sesuai Marginal'), data: [], backgroundColor: kelasColors['Sesuai Marginal'] },
+        { label: t('Tidak Sesuai'), data: [], backgroundColor: kelasColors['Tidak Sesuai'] },
+        { label: t('Kawasan Lindung / Tidak Dinilai'), data: [], backgroundColor: kelasColors['Kawasan Lindung / Tidak Dinilai'] }, // Opsional
+        { label: t('NONE'), data: [], backgroundColor: kelasColors['NONE'] }
       ];
 
       // Mapping label kelas standar ke index dataset
@@ -1843,6 +1846,7 @@
   <script>
     // --- Fitur Ganti Bahasa (ID / EN) ---
     const langDict = {
+      // Main UI
       "Analisis Kesesuaian Lahan Komoditas Semangka • Skripsi": "Watermelon Land Suitability Analysis • Thesis",
       "Beranda & Peta Kesesuaian Lahan": "Home & Land Suitability Map",
       "Pilih layer pada daftar di bawah untuk ditampilkan pada peta. Warna poligon mengikuti kelas kesesuaian (S1, S2, S3, N, dan tanpa nilai).": "Select a layer from the list below to display on the map. Polygon colors follow suitability classes (S1, S2, S3, N, and no data).",
@@ -1878,16 +1882,93 @@
       "Logout": "Logout",
       "Admin": "Admin",
       "Cari Kecamatan...": "Search District...",
-      "Luas Hektar (Ha)": "Area in Hectares (Ha)",
+      "Luas Hektar (Ha)": "Area (Ha)",
       "Luas (Ha)": "Area (Ha)",
       "Luas": "Area",
       "Total Luas Area Kesesuaian": "Total Suitability Area",
       "Sebaran Luas Kesesuaian per Desa": "Suitability Area Distribution by Village",
-      "-- Pilih Kecamatan --": "-- Select District --"
+      "-- Pilih Kecamatan --": "-- Select District --",
+      
+      // Database Definitions & Parameters
+      "Curah Hujan Barru (Otomatis)": "Rainfall Barru (Auto)",
+      "Curah Hujan Barru": "Rainfall Barru",
+      "Curah Hujan": "Rainfall",
+      "Fisik tanah": "Soil Physical",
+      "Drainase": "Drainage",
+      "Bentuklahan": "Landform",
+      "Kemiringan Lereng": "Slope Gradient",
+      "Profil tanah": "Soil Profile",
+      "Kedalaman Efektif Tanah": "Effective Soil Depth",
+      "Kedalaman Tanah": "Soil Depth",
+      "Kimia tanah": "Soil Chemistry",
+      "pH Tanah": "Soil pH",
+      "Bahan organik": "Organic Matter",
+      "C-Organik": "Soil Organic Carbon",
+      "Kapasitas tukar": "Exchange Capacity",
+      "KTK (Kapasitas Tukar Kation)": "CEC (Cation Exchange Capacity)",
+      "Kapasitas Tukar Kation": "Cation Exchange Capacity",
+      "Iklim": "Climate",
+      "Tekstur Tanah": "Soil Texture",
+      "Tekstur": "Texture",
+      "Batuan Permukaan / Singkapan": "Surface Rock / Outcrop",
+      "Batuan Permukaan": "Surface Rock",
+      "Salinitas": "Salinity",
+      "Batas Administrasi Desa": "Village Administration Boundary",
+      "Peta Administrasi Kabupaten Barru": "Barru Regency Administration Map",
+      "Hasil Analisis Suitability Lahan": "Land Suitability Analysis Result",
+      "Penjelasan dampak:": "Impact explanation:",
+      "S1: Baik–sedang": "S1: Good-moderate",
+      "S2: Terhambat": "S2: Poorly drained",
+      "S3: Terhambat, agak cepat": "S3: Poorly drained, somewhat fast",
+      "N: Sangat terhambat, cepat": "N: Very poorly drained, fast",
+      "S1: <8": "S1: <8",
+      "S2: 8–16": "S2: 8–16",
+      "S3: 16–30": "S3: 16–30",
+      "N: >30": "N: >30",
+      "S1: >1,2": "S1: >1.2",
+      "S2: 0,8–1,2": "S2: 0.8–1.2",
+      "S3: <0,8": "S3: <0.8",
+      "S1: 5,5–7,8": "S1: 5.5–7.8",
+      "S2: 5,0–5,5 dan 7,8–8,0": "S2: 5.0–5.5 and 7.8–8.0",
+      "S3: <5,0": "S3: <5.0",
+      "S1: >16": "S1: >16",
+      "S2: ≤16": "S2: ≤16",
+      "S1: 1.000–2.000": "S1: 1,000–2,000",
+      "S2: 500–1.000 dan 2.000–3.000": "S2: 500–1,000 and 2,000–3,000",
+      "S3: 250–500 dan 3.000–6.000": "S3: 250–500 and 3,000–6,000",
+      "N: <250 atau >6.000": "N: <250 or >6,000",
+      "S1: Halus, agak halus, sedang": "S1: Fine, somewhat fine, medium",
+      "S3: Agak kasar": "S3: Somewhat coarse",
+      "N: Kasar": "N: Coarse",
+      "S1: <5": "S1: <5",
+      "S2: 5–15": "S2: 5–15",
+      "S3: 15–40": "S3: 15–40",
+      "N: >40": "N: >40",
+      "Semakin dalam tanah efektif, semakin leluasa perakaran berkembang dan menyerap unsur hara serta air.": "The deeper the effective soil, the more freely roots can grow and absorb nutrients and water.",
+      "Desa": "Village",
+      "Kecamatan": "District",
+      "Area (Ha)": "Area (Ha)",
+      "faktor_pembatas": "limiting_factors",
+      "kelas_kesesuaian": "suitability_class"
     };
 
     const keysSorted = Object.keys(langDict).sort((a,b) => b.length - a.length);
     let currentLang = localStorage.getItem('geoai_lang') || 'ID';
+
+    // Global translation helper
+    window.t_str = function(str) {
+      if (currentLang === 'EN' && str) {
+        if (langDict[str]) return langDict[str];
+        let text = str;
+        keysSorted.forEach(k => {
+           if (text.includes(k)) {
+               text = text.split(k).join(langDict[k]);
+           }
+        });
+        return text;
+      }
+      return str;
+    };
 
     function translateNode(node) {
       if (node.nodeType === 3) {
