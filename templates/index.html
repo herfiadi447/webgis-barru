@@ -689,21 +689,17 @@
         </button>
 
         {% if user %}
-        <span style="font-size:0.8rem; opacity:0.9;">Halo, {{ user }}</span>
-        <a href="{{ url_for('admin') }}" class="nav-login">
+        <span style="font-size:0.85rem; opacity:0.9; margin-left: 8px;">Halo, <b>{{ user }}</b></span>
+        <a href="{{ url_for('admin') }}" class="nav-login" style="background: #10b981; color: #fff;">
           <i class="fas fa-sliders"></i> Admin
         </a>
-        <!-- Linda-AI Button -->
-        <button class="btn-geoai" id="btn-launch-geoai">
-          <i class="fas fa-robot"></i>
-          <span>Linda-AI</span>
-        </button>
-        <a href="{{ url_for('logout') }}" style="font-size:0.8rem;">Logout</a>
+        <a href="{{ url_for('logout') }}" style="font-size:0.85rem; font-weight:600; color: #fca5a5; margin-left: 8px;">Logout</a>
         {% else %}
         <a href="{{ url_for('login') }}" class="nav-login">
           <i class="fas fa-user-lock"></i> Login
         </a>
         {% endif %}
+        
         <!-- Tombol Ganti Bahasa -->
         <button id="btn-lang-toggle" onclick="toggleLanguage()" class="btn-geoai" style="padding: 6px 12px; background: #eab308; color: #fff; margin-left: 8px;">
           <i class="fas fa-language"></i> <span id="lang-text">EN</span>
