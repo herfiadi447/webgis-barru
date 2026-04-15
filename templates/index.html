@@ -704,6 +704,10 @@
           <i class="fas fa-user-lock"></i> Login
         </a>
         {% endif %}
+        <!-- Tombol Ganti Bahasa -->
+        <button id="btn-lang-toggle" onclick="toggleLanguage()" class="btn-geoai" style="padding: 6px 12px; background: #eab308; color: #fff; margin-left: 8px;">
+          <i class="fas fa-language"></i> <span id="lang-text">EN</span>
+        </button>
       </div>
     </div>
   </nav>
@@ -1834,6 +1838,114 @@
 
       return 'Kawasan Lindung / Tidak Dinilai';
     }
+  </script>
+
+  <script>
+    // --- Fitur Ganti Bahasa (ID / EN) ---
+    const langDict = {
+      "Analisis Kesesuaian Lahan Komoditas Semangka • Skripsi": "Watermelon Land Suitability Analysis • Thesis",
+      "Beranda & Peta Kesesuaian Lahan": "Home & Land Suitability Map",
+      "Pilih layer pada daftar di bawah untuk ditampilkan pada peta. Warna poligon mengikuti kelas kesesuaian (S1, S2, S3, N, dan tanpa nilai).": "Select a layer from the list below to display on the map. Polygon colors follow suitability classes (S1, S2, S3, N, and no data).",
+      "Pilih layer pada daftar di bawah untuk ditampilkan pada peta.": "Select a layer from the list below to display on the map.",
+      "Parameter Lahan yang Digunakan": "Land Parameters Used",
+      "Ringkasan kriteria yang memengaruhi kelas kesesuaian (S1, S2, S3, N). Teks ini bisa kamu edit sesuai bab metodologi skripsi.": "Summary of criteria affecting suitability classes (S1, S2, S3, N). This text can be edited according to your thesis methodology.",
+      "Kawasan Lindung / Tidak Dinilai": "Protected Area / Not Assessed",
+      "Kawasan Lindung": "Protected Area",
+      "belum ada layer dipilih": "no layer selected",
+      "Distribusi Kesesuaian": "Suitability Distribution",
+      "Sesuai Marginal (S3)": "Marginally Suitable (S3)",
+      "Sesuai Marginal": "Marginally Suitable",
+      "Sangat Sesuai (S1)": "Highly Suitable (S1)",
+      "Sangat Sesuai": "Highly Suitable",
+      "Tidak Sesuai (N)": "Not Suitable (N)",
+      "Tidak Sesuai": "Not Suitable",
+      "Sesuai (S2)": "Moderately Suitable (S2)",
+      "Sesuai": "Moderately Suitable",
+      "Parameter Lahan": "Land Parameters",
+      "Tanpa Nilai": "No Data",
+      "Kelas Kesesuaian": "Suitability Class",
+      "Daftar Layer": "Layer List",
+      "Peta Utama": "Main Map",
+      "Tampilkan lebih banyak": "Show more",
+      "Tampilkan lebih sedikit": "Show less",
+      "Tampilkan": "Show",
+      "Sembunyikan": "Hide",
+      "Informasi": "Information",
+      "Parameter": "Parameter",
+      "Kesesuaian": "Suitability",
+      "Beranda": "Home",
+      "Login": "Login",
+      "Logout": "Logout",
+      "Admin": "Admin",
+      "Cari Kecamatan...": "Search District...",
+      "Luas Hektar (Ha)": "Area in Hectares (Ha)",
+      "Luas (Ha)": "Area (Ha)",
+      "Luas": "Area",
+      "Total Luas Area Kesesuaian": "Total Suitability Area",
+      "Sebaran Luas Kesesuaian per Desa": "Suitability Area Distribution by Village",
+      "-- Pilih Kecamatan --": "-- Select District --"
+    };
+
+    const keysSorted = Object.keys(langDict).sort((a,b) => b.length - a.length);
+    let currentLang = localStorage.getItem('geoai_lang') || 'ID';
+
+    function translateNode(node) {
+      if (node.nodeType === 3) {
+        let text = node.nodeValue;
+        if (!text.trim()) return;
+        let changed = false;
+        keysSorted.forEach(k => {
+             if (text.includes(k)) {
+                 text = text.split(k).join(langDict[k]);
+                 changed = true;
+             }
+        });
+        if (changed) node.nodeValue = text;
+      } else if (node.nodeType === 1) {
+        if (node.tagName === 'SCRIPT' || node.tagName === 'STYLE') return;
+        
+        let ph = node.getAttribute('placeholder');
+        if (ph) {
+           let changed = false;
+           keysSorted.forEach(k => {
+               if (ph.includes(k)) {
+                   ph = ph.split(k).join(langDict[k]);
+                   changed = true;
+               }
+           });
+           if (changed) node.setAttribute('placeholder', ph);
+        }
+        
+        node.childNodes.forEach(child => translateNode(child));
+      }
+    }
+
+    function toggleLanguage() {
+      const newLang = currentLang === 'ID' ? 'EN' : 'ID';
+      localStorage.setItem('geoai_lang', newLang);
+      window.location.reload();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const btnText = document.getElementById('lang-text');
+      if (btnText) btnText.textContent = currentLang === 'ID' ? 'EN' : 'ID';
+
+      if (currentLang === 'EN') {
+        translateNode(document.body);
+
+        // Tangkap elemen dinamis (seperti popup peta atau chart tooltip)
+        const observer = new MutationObserver(mutations => {
+          mutations.forEach(mutation => {
+            mutation.addedNodes.forEach(node => {
+               if (node.nodeType === 1 || node.nodeType === 3) {
+                 translateNode(node);
+               }
+            });
+          });
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+      }
+    });
   </script>
 
 </body>
