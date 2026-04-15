@@ -1465,7 +1465,7 @@
     function initializeChat() {
       if (!chatInstance) {
         chatInstance = createChat({
-          webhookUrl: 'https://n8n.geopangansidrap.id/webhook/ef3bb53d-b173-44e7-8ff1-da6fde56685a/chat',
+          webhookUrl: window.location.origin + '/api/chatbot',
           initialMessages: [
             'Halo! 👋',
             'Saya Linda. Silakan tanya apa saja seputar sistem kesesuaian lahan ini.'

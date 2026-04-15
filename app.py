@@ -1302,17 +1302,25 @@ def distribusi_kesesuaian():
 # -------------------------------------------------
 # Chatbot n8n Proxy (opsional)
 # -------------------------------------------------
-@app.route("/api/chatbot", methods=["POST"])
+@app.route("/api/chatbot", methods=["POST", "OPTIONS"])
 def chatbot_proxy():
-    user_msg = request.json.get("message")
+    if request.method == "OPTIONS":
+        return {}, 200
 
-    resp = requests.post(
-        "https://n8n-hkpugvrhtnxs.ceri.sumopod.my.id/webhook/4091fa09-fb9a-4039-9411-7104d213f601/chat",
-        json={"message": user_msg},
-        timeout=20,
-    )
+    n8n_url = os.getenv("N8N_CHAT_WEBHOOK_URL", "https://n8n.geopangansidrap.id/webhook/ef3bb53d-b173-44e7-8ff1-da6fde56685a/chat")
+    payload = request.get_json(silent=True) or {}
 
-    return jsonify(resp.json())
+    try:
+        resp = requests.post(n8n_url, json=payload, timeout=30)
+        try:
+            resp_data = resp.json()
+        except:
+            resp_data = {"text": resp.text}
+        return jsonify(resp_data), resp.status_code
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
 
 # -------------------------------------------------
 # INIT DB saat module dimuat (untuk Vercel cold start)
