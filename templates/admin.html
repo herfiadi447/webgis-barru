@@ -277,6 +277,11 @@
           <i class="fas fa-user-shield"></i>
           {{ current_user }}
         </span>
+        <a href="{{ url_for('ai_knowledge') }}" target="_blank">
+          <button class="btn-small btn-ghost">
+            <i class="fas fa-brain"></i> Pengetahuan AI
+          </button>
+        </a>
         <a href="{{ url_for('index') }}">
           <button class="btn-small btn-ghost">
             <i class="fas fa-arrow-left"></i> Beranda

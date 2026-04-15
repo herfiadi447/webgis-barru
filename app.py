@@ -395,6 +395,12 @@ def admin():
         current_user=session.get("username"),
     )
 
+@app.route("/admin/ai-knowledge")
+@admin_required
+def ai_knowledge():
+    n8n_url = os.getenv("N8N_KNOWLEDGE_URL", "https://n8n.geopangansidrap.id/form/4e1e20d4-f759-42c8-8439-87b93f43aa7c")
+    return redirect(n8n_url)
+
 # -------------------------------------------------
 # Upload Layer Functions
 # -------------------------------------------------
