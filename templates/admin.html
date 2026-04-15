@@ -292,6 +292,10 @@
             <i class="fas fa-sign-out-alt"></i> Logout
           </button>
         </a>
+        <!-- Tombol Ganti Bahasa -->
+        <button id="btn-lang-toggle" onclick="toggleLanguage()" class="btn-small" style="background: #eab308; color: #fff; border: none; cursor: pointer; padding: 6px 12px;">
+          <i class="fas fa-language"></i> <span id="lang-text">EN</span>
+        </button>
       </div>
     </header>
 
@@ -755,6 +759,7 @@
     </div>
 
   </div>
+  <script src="{{ url_for('static', filename='lang.js') }}"></script>
 </body>
 
 </html>

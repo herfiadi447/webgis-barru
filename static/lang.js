@@ -1,0 +1,237 @@
+// --- Fitur Ganti Bahasa (ID / EN) ---
+    const langDict = {
+      // Main UI
+      "Analisis Kesesuaian Lahan Komoditas Semangka • Skripsi": "Watermelon Land Suitability Analysis • Thesis",
+      "Beranda & Peta Kesesuaian Lahan": "Home & Land Suitability Map",
+      "Pilih layer pada daftar di bawah untuk ditampilkan pada peta. Warna poligon mengikuti kelas kesesuaian (S1, S2, S3, N, dan tanpa nilai).": "Select a layer from the list below to display on the map. Polygon colors follow suitability classes (S1, S2, S3, N, and no data).",
+      "Pilih layer pada daftar di bawah untuk ditampilkan pada peta.": "Select a layer from the list below to display on the map.",
+      "Parameter Lahan yang Digunakan": "Land Parameters Used",
+      "Ringkasan kriteria yang memengaruhi kelas kesesuaian (S1, S2, S3, N). Teks ini bisa kamu edit sesuai bab metodologi skripsi.": "Summary of criteria affecting suitability classes (S1, S2, S3, N). This text can be edited according to your thesis methodology.",
+      "Kawasan Lindung / Tidak Dinilai": "Protected Area / Not Assessed",
+      "Kawasan Lindung": "Protected Area",
+      "belum ada layer dipilih": "no layer selected",
+      "Distribusi Kesesuaian": "Suitability Distribution",
+      "Sesuai Marginal (S3)": "Marginally Suitable (S3)",
+      "Sesuai Marginal": "Marginally Suitable",
+      "Sangat Sesuai (S1)": "Highly Suitable (S1)",
+      "Sangat Sesuai": "Highly Suitable",
+      "Tidak Sesuai (N)": "Not Suitable (N)",
+      "Tidak Sesuai": "Not Suitable",
+      "Sesuai (S2)": "Moderately Suitable (S2)",
+      "Sesuai": "Moderately Suitable",
+      "Parameter Lahan": "Land Parameters",
+      "Tanpa Nilai": "No Data",
+      "Kelas Kesesuaian": "Suitability Class",
+      "Daftar Layer": "Layer List",
+      "Peta Utama": "Main Map",
+      "Tampilkan lebih banyak": "Show more",
+      "Tampilkan lebih sedikit": "Show less",
+      "Tampilkan": "Show",
+      "Sembunyikan": "Hide",
+      "Informasi": "Information",
+      "Parameter": "Parameter",
+      "Kesesuaian": "Suitability",
+      "Beranda": "Home",
+      "Login": "Login",
+      "Logout": "Logout",
+      "Admin": "Admin",
+      "Cari Kecamatan...": "Search District...",
+      "Luas Hektar (Ha)": "Area (Ha)",
+      "Luas (Ha)": "Area (Ha)",
+      "Luas": "Area",
+      "Total Luas Area Kesesuaian": "Total Suitability Area",
+      "Sebaran Luas Kesesuaian per Desa": "Suitability Area Distribution by Village",
+      "-- Pilih Kecamatan --": "-- Select District --",
+      
+      // Database Definitions & Parameters
+      "Curah Hujan Barru (Otomatis)": "Rainfall Barru (Auto)",
+      "Curah Hujan Barru": "Rainfall Barru",
+      "Curah Hujan": "Rainfall",
+      "Fisik tanah": "Soil Physical",
+      "Drainase": "Drainage",
+      "Bentuklahan": "Landform",
+      "Kemiringan Lereng": "Slope Gradient",
+      "Profil tanah": "Soil Profile",
+      "Kedalaman Efektif Tanah": "Effective Soil Depth",
+      "Kedalaman Tanah": "Soil Depth",
+      "Kimia tanah": "Soil Chemistry",
+      "pH Tanah": "Soil pH",
+      "Bahan organik": "Organic Matter",
+      "C-Organik": "Soil Organic Carbon",
+      "Kapasitas tukar": "Exchange Capacity",
+      "KTK (Kapasitas Tukar Kation)": "CEC (Cation Exchange Capacity)",
+      "Kapasitas Tukar Kation": "Cation Exchange Capacity",
+      "Iklim": "Climate",
+      "Tekstur Tanah": "Soil Texture",
+      "Tekstur": "Texture",
+      "Batuan Permukaan / Singkapan": "Surface Rock / Outcrop",
+      "Batuan Permukaan": "Surface Rock",
+      "Salinitas": "Salinity",
+      "Batas Administrasi Desa": "Village Administration Boundary",
+      "Peta Administrasi Kabupaten Barru": "Barru Regency Administration Map",
+      "Hasil Analisis Suitability Lahan": "Land Suitability Analysis Result",
+      "Penjelasan dampak:": "Impact explanation:",
+      "S1: Baik–sedang": "S1: Good-moderate",
+      "S2: Terhambat": "S2: Poorly drained",
+      "S3: Terhambat, agak cepat": "S3: Poorly drained, somewhat fast",
+      "N: Sangat terhambat, cepat": "N: Very poorly drained, fast",
+      "S1: <8": "S1: <8",
+      "S2: 8–16": "S2: 8–16",
+      "S3: 16–30": "S3: 16–30",
+      "N: >30": "N: >30",
+      "S1: >1,2": "S1: >1.2",
+      "S2: 0,8–1,2": "S2: 0.8–1.2",
+      "S3: <0,8": "S3: <0.8",
+      "S1: 5,5–7,8": "S1: 5.5–7.8",
+      "S2: 5,0–5,5 dan 7,8–8,0": "S2: 5.0–5.5 and 7.8–8.0",
+      "S3: <5,0": "S3: <5.0",
+      "S1: >16": "S1: >16",
+      "S2: ≤16": "S2: ≤16",
+      "S1: 1.000–2.000": "S1: 1,000–2,000",
+      "S2: 500–1.000 dan 2.000–3.000": "S2: 500–1,000 and 2,000–3,000",
+      "S3: 250–500 dan 3.000–6.000": "S3: 250–500 and 3,000–6,000",
+      "N: <250 atau >6.000": "N: <250 or >6,000",
+      "S1: Halus, agak halus, sedang": "S1: Fine, somewhat fine, medium",
+      "S3: Agak kasar": "S3: Somewhat coarse",
+      "N: Kasar": "N: Coarse",
+      "S1: <5": "S1: <5",
+      "S2: 5–15": "S2: 5–15",
+      "S3: 15–40": "S3: 15–40",
+      "N: >40": "N: >40",
+      "Semakin dalam tanah efektif, semakin leluasa perakaran berkembang dan menyerap unsur hara serta air.": "The deeper the effective soil, the more freely roots can grow and absorb nutrients and water.",
+      "Desa": "Village",
+      "Kecamatan": "District",
+      "Area (Ha)": "Area (Ha)",
+      "faktor_pembatas": "limiting_factors",
+      "kelas_kesesuaian": "suitability_class",
+      "Bahan organik memperbaiki struktur tanah, meningkatkan kapasitas menahan air, dan menjadi sumber energi bagi mikroorganisme. S1 (>1,2%) menunjukkan tanah subur dan gembur sehingga akar berkembang dengan maksimal. Pada S2, kandungan organik mulai menurun sehingga tanah lebih padat dan aktivitas mikroba berkurang. Pada S3 (<0,8%), tanah miskin bahan organik sehingga mudah retak, kering, dan miskin hara, menyebabkan ukuran buah lebih kecil dan jaringan tanaman lebih rapuh.": "Organic matter improves soil structure, water holding capacity, and provides energy for microorganisms. S1 (>1.2%) indicates fertile and loose soil for maximum root development. In S2, organic content decreases making soil denser and reducing microbial activity. In S3 (<0.8%), the soil is poor in organic matter easily cracking, drying, and poor in nutrients, leading to smaller fruits and fragile plant tissues.",
+      "Curah hujan menentukan ketersediaan air sepanjang pertumbuhan tanaman. Pada kisaran S1, air tersedia cukup untuk mendukung perkembangan akar, daun, dan pembentukan buah. Pada S2, curah hujan yang agak rendah dapat menyebabkan kekeringan pada fase vegetatif, sementara curah hujan agak tinggi (>2.000 mm) meningkatkan kelembaban tanah dan risiko penyakit. Pada S3, air sangat kurang (<500 mm) sehingga tanaman mengalami stres air berat, sedangkan curah hujan sangat tinggi (>3.000 mm) memicu genangan, busuk akar, dan menurunkan kadar gula buah. Pada kelas N, kondisi terlalu ekstrem sehingga tanaman tidak mampu berproduksi dengan normal.": "Rainfall determines water availability throughout plant growth. In the S1 range, water is sufficient to support root, leaf, and fruit development. In S2, slightly lower rainfall can cause drought during vegetative phase, while slightly higher rainfall (>2,000 mm) increases soil moisture and disease risks. In S3, severe water shortage (<500 mm) causes heavy water stress, while very high rainfall (>3,000 mm) triggers waterlogging, root rot, and reduces fruit sugar content. In class N, extreme conditions prevent normal plant production.",
+      "Drainase memengaruhi aerasi tanah dan respirasi akar. Pada S1, oksigen cukup tersedia sehingga akar aktif menyerap air dan hara. Pada S2, drainase terhambat menyebabkan tanah becek, akar kekurangan oksigen, dan tanaman rentan terhadap penyakit akar. Pada S3, kondisi drainase yang tidak stabil membuat akar mengalami stres akibat perubahan kelembaban tanah. Pada kelas N, akar mengalami pembusukan (drainase sangat terhambat) atau kekeringan ekstrem (drainase terlalu cepat) sehingga tanaman sulit bertahan hidup.": "Drainage affects soil aeration and root respiration. In S1, oxygen is sufficient for active root absorption. In S2, poor drainage causes muddy soil, oxygen deficiency, and susceptibility to root diseases. In S3, unstable drainage causes stress due to soil moisture fluctuations. In N, roots rot (very poor drainage) or face extreme drought (excessive drainage) making survival difficult.",
+      "Tekstur tanah menentukan kemampuan tanah dalam menahan air dan menyediakan aerasi. Pada S1, tekstur halus hingga sedang memberikan keseimbangan ideal antara penyerapan air dan pertukaran udara. Pada S3, tanah agak kasar menyimpan air lebih sedikit sehingga tanaman cepat mengalami kekeringan. Pada kelas N, tanah berpasir kasar tidak mampu menyimpan air maupun hara sehingga pertumbuhan semangka sangat terhambat.": "Soil texture determines water retention and aeration. In S1, fine to medium texture provides an ideal balance of water absorption and air exchange. In S3, somewhat coarse soil stores less water increasing drought vulnerability. In class N, coarse sandy soil cannot store water or nutrients, severely stunting watermelon growth.",
+      "menunjukkan kapasitas tanah menyimpan dan melepaskan nutrisi. Pada S1, KTK tinggi memungkinkan unsur hara seperti kalium, magnesium, dan kalsium tersedia dalam jumlah cukup dan stabil. Pada S2, KTK rendah membuat unsur hara mudah tercuci terutama di musim hujan, sehingga tanaman sering menunjukkan gejala kekurangan hara walaupun sudah dipupuk. Dampaknya adalah pertumbuhan kurang vigor dan pembentukan buah tidak optimal.": "indicates soil capacity to store and release nutrients. In S1, high CEC ensures stable availability of potassium, magnesium, and calcium. In S2, low CEC leads to nutrient leaching especially during the rainy season, causing deficiency symptoms even with fertilization. This results in less vigorous growth and suboptimal fruiting.",
+      "Batu permukaan menghambat penetrasi akar dan pengolahan tanah. S1 ideal, akar dapat berkembang bebas. Pada S2 dan S3, pergerakan akar terhalang dan kapasitas tanah menurun. Pada N, batu terlalu banyak dan lahan tidak dapat diolah secara efektif.": "Surface rocks hinder root penetration and tillage. S1 is ideal for free root development. In S2 and S3, root movement is restricted and soil capacity is reduced. In N, excessive rocks make effective tillage impossible.",
+      "merupakan kisaran ideal di mana unsur hara makro dan mikro mudah diserap akar. Pada S2, tanah sedikit lebih asam atau basa sehingga beberapa unsur mikro mulai kurang tersedia, menyebabkan gejala klorosis dan pertumbuhan kurang optimal. Pada S3 (<5,0), tanah sangat asam dan biasanya mengandung Al dan Fe terlarut dalam jumlah tinggi yang bersifat toksik bagi akar. Hal ini menghambat penyerapan fosfor secara signifikan dan menurunkan pertumbuhan tanaman secara keseluruhan.": "is the ideal range where macro and micro nutrients are easily absorbed. In S2, soil is slightly more acidic or alkaline making some micro nutrients less available, causing chlorosis and suboptimal growth. In S3 (<5.0), soil is very acidic and contains high dissolved Al and Fe which is toxic to roots. This significantly inhibits phosphorus absorption and reduces overall plant growth.",
+      "Lereng memengaruhi tingkat erosi, pencucian hara, dan stabilitas tanah. Lereng landai (<8%) aman untuk budidaya semangka dan memudahkan pengelolaan lahan. Pada S2 (8–16%), erosi mulai terjadi dan hara mudah tercuci ke bagian lereng bawah. Pada S3 (16–30%), erosi berat menyebabkan tanah menjadi dangkal dan kurang stabil. Pada kelas N (>30%), lereng sangat curam sehingga tidak layak dibudidayakan tanpa teknik konservasi intensif.": "Slope affects erosion rate, nutrient leaching, and soil stability. Gentle slopes (<8%) are safe for cultivation and facilitate management. In S2 (8-16%), erosion begins and nutrients leach downwards. In S3 (16-30%), heavy erosion makes soil shallow and unstable. In N (>30%), slopes are too steep for cultivation without intensive conservation.",
+      "Salinitas tinggi meningkatkan tekanan osmotik tanah sehingga akar sulit menyerap air meskipun tanah tampak basah. Pada S1 (<4), kondisi aman bagi pertumbuhan semangka. S2 (4–6) mulai menghambat penyerapan air dan hara sehingga pertumbuhan melambat. Pada S3 (6–8), tanaman mengalami stres osmotik berat sehingga daun mengecil, pertumbuhan terhambat, dan produksi turun signifikan. Pada kelas N (>8), akar hampir tidak dapat menyerap air sehingga tanaman mengalami dehidrasi fisiologis.": "High salinity increases soil osmotic pressure, making water absorption difficult despite wet soil. In S1 (<4), conditions are safe. S2 (4-6) begins to inhibit water and nutrient absorption, slowing growth. In S3 (6-8), severe osmotic stress causes stunted leaves and significantly reduced yield. In N (>8), roots can barely absorb water, causing physiological dehydration.",
+
+      // Admin UI Page
+      "Kelola layer peta & akun admin": "Manage map layers & admin accounts",
+      "Kelola Layer Parameter": "Manage Parameter Layers",
+      "Upload shapefile (.zip) atau GeoJSON untuk menambah layer parameter baru.": "Upload shapefile (.zip) or GeoJSON to add a new parameter layer.",
+      "Nama Layer": "Layer Name",
+      "Contoh: Drainase, Tekstur, pH Tanah": "e.g., Drainage, Texture, Soil pH",
+      "Deskripsi (opsional)": "Description (optional)",
+      "Keterangan singkat layer, sumber data, tahun, dsb.": "Brief description of the layer, data source, year, etc.",
+      "File Layer": "Layer File",
+      "Upload & Simpan": "Upload & Save",
+      "Daftar Layer Parameter": "Parameter Layer List",
+      "Dibuat": "Created",
+      "Aksi": "Action",
+      "Hapus": "Delete",
+      "Kelola User Admin": "Manage Admin Users",
+      "Tambah akun admin baru, reset password, atau hapus akun yang tidak digunakan.": "Add new admin account, reset password, or delete unused accounts.",
+      "Username": "Username",
+      "Password baru": "New password",
+      "Password": "Password",
+      "Berikan hak admin penuh": "Grant full admin rights",
+      "Tambah User": "Add User",
+      "Daftar User": "User List",
+      "Peran": "Role",
+      "Reset PW": "Reset PW",
+      "Kelola Parameter Lahan": "Manage Land Parameters",
+      "Ubah isi kartu pada menu \"Parameter Lahan yang Digunakan\" di halaman utama.": "Edit card contents in the 'Land Parameters Used' menu on the main page.",
+      "Tag (pill hijau)": "Tag (green pill)",
+      "Icon FontAwesome (opsional)": "FontAwesome Icon (optional)",
+      "Judul": "Title",
+      "Contoh: Drainase": "e.g., Drainage",
+      "Simpan Perubahan": "Save Changes",
+      "Kelola Layer Kesesuaian Lahan": "Manage Land Suitability Layers",
+      "Kelola Layer Informasi Tambahan": "Manage Additional Information Layers",
+      "Analisis Otomatis (WebGIS Geoprocessing)": "Automatic Analysis (WebGIS Geoprocessing)",
+      "Upload manual layer peta kesesuaian lahan, atau jalankan komputasi otomatis berbasis parameter yang ada.": "Upload land suitability map layer manually, or run automatic computation based on existing parameters.",
+      "Sistem akan menumpuk (intersect) seluruh layer parameter yang ada di database saat ini untuk menghasilkan Peta Kesesuaian Lahan baru secara otomatis. Proses ini mungkin memakan waktu beberapa detik.": "The system will intersect all parameter layers currently in the database to generate a new Land Suitability Map automatically. This process may take a few seconds.",
+      "Jalankan Analisis Spasial Otomatis": "Run Automatic Spatial Analysis",
+      "Upload Manual Nama Layer": "Manual Upload Layer Name",
+      "Upload Kesesuaian": "Upload Suitability",
+      "Daftar Layer Kesesuaian": "Suitability Layer List",
+      "Upload Informasi": "Upload Information",
+      "Daftar Layer Informasi": "Information Layer List",
+      "Pengetahuan AI": "AI Knowledge"
+    };
+
+    const keysSorted = Object.keys(langDict).sort((a,b) => b.length - a.length);
+    let currentLang = localStorage.getItem('geoai_lang') || 'ID';
+
+    // Global translation helper
+    window.t_str = function(str) {
+      if (currentLang === 'EN' && str) {
+        if (langDict[str]) return langDict[str];
+        let text = str;
+        keysSorted.forEach(k => {
+           if (text.includes(k)) {
+               text = text.split(k).join(langDict[k]);
+           }
+        });
+        return text;
+      }
+      return str;
+    };
+
+    function translateNode(node) {
+      if (node.nodeType === 3) {
+        let text = node.nodeValue;
+        if (!text.trim()) return;
+        let changed = false;
+        keysSorted.forEach(k => {
+             if (text.includes(k)) {
+                 text = text.split(k).join(langDict[k]);
+                 changed = true;
+             }
+        });
+        if (changed) node.nodeValue = text;
+      } else if (node.nodeType === 1) {
+        if (node.tagName === 'SCRIPT' || node.tagName === 'STYLE') return;
+        
+        let ph = node.getAttribute('placeholder');
+        if (ph) {
+           let changed = false;
+           keysSorted.forEach(k => {
+               if (ph.includes(k)) {
+                   ph = ph.split(k).join(langDict[k]);
+                   changed = true;
+               }
+           });
+           if (changed) node.setAttribute('placeholder', ph);
+        }
+        
+        node.childNodes.forEach(child => translateNode(child));
+      }
+    }
+
+    function toggleLanguage() {
+      const newLang = currentLang === 'ID' ? 'EN' : 'ID';
+      localStorage.setItem('geoai_lang', newLang);
+      window.location.reload();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const btnText = document.getElementById('lang-text');
+      if (btnText) btnText.textContent = currentLang === 'ID' ? 'EN' : 'ID';
+
+      if (currentLang === 'EN') {
+        translateNode(document.body);
+
+        // Tangkap elemen dinamis (seperti popup peta atau chart tooltip)
+        const observer = new MutationObserver(mutations => {
+          mutations.forEach(mutation => {
+            mutation.addedNodes.forEach(node => {
+               if (node.nodeType === 1 || node.nodeType === 3) {
+                 translateNode(node);
+               }
+            });
+          });
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+      }
+    });
+  
